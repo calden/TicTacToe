@@ -1,4 +1,7 @@
+$size_tile: 100px;
+
 .tile {
-    background: red;
-    border: 2px solid black;
+  width: $size_tile;
+  height: $size_tile;
+  border: 2px solid red;
 }
