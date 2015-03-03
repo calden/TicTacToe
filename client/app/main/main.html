@@ -1,0 +1,36 @@
+<div ng-include="'components/navbar/navbar.html'"></div>
+
+
+
+<div class="container-fluid">
+    <div class="row">
+      <div class="fixed col-md-3 sidebar-outer">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Liste des parties</h3>
+        </div>
+        <div class="panel-body">
+           <ul class="list-group" ng-repeat="game in games">
+             <li class="list-group-item list-group-item-success" ng-class="">{{game.info}}</li>
+           </ul>
+        </div>
+
+      </div>
+      </div>
+      <div class="col-md-9">
+          <game-board></game-board>
+      </div>
+    </div>
+
+
+
+
+</div>
+
+<footer class="footer">
+  <div class="container">
+      <p>Angular Fullstack v2.0.13 |
+        <a href="https://twitter.com/mdebonnaire">@mdebonnaire</a>
+      </p>
+  </div>
+</footer>
