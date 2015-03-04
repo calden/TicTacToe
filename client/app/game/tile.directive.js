@@ -1,16 +1,30 @@
 'use strict';
 
 angular.module('ticTacToeApp')
-      .directive('tile', [ function(){
+      .directive('tile', [ '$rootScope', function($rootScope){
         function controllerTile ($scope) {
-          // body...
+           $scope.value = function () {
+             return $scope.statetile==='_'? '': $scope.statetile;
+           };
+           $scope.isEmpty = function () {
+             return $scope.statetile==='_';
+           };
+           $scope.playThisTile = function () {
+             if ($scope.isEmpty()) {
+               $rootScope.$emit('tilePlayed',$scope.position);
+             }
+           };
         };
         // Runs during compile
         return {
           // name: '',
           // priority: 1,
           // terminal: true,
-          // scope: {}, // {} = isolate, true = child, false/undefined = no change
+          scope: {
+            statetile: '=',
+             position: '@'
+            // tilePlayed: '&'
+          }, // {} = isolate, true = child, false/undefined = no change
           // require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
           restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
           controller: controllerTile,
