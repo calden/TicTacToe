@@ -3,8 +3,15 @@ $size_tile: 100px;
 .tile {
   width: $size_tile;
   height: $size_tile;
-  border: 2px solid red;
+  border: 2px solid #abc8db;
   font-size: 75px;
+  background: #abc8db;
+background-image: -webkit-linear-gradient(top, #abc8db, #2980b9);
+background-image: -moz-linear-gradient(top, #abc8db, #2980b9);
+background-image: -ms-linear-gradient(top, #abc8db, #2980b9);
+background-image: -o-linear-gradient(top, #abc8db, #2980b9);
+background-image: linear-gradient(to bottom, #abc8db, #2980b9);
+
 }
 
 .bounce {
