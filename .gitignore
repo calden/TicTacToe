@@ -3,8 +3,6 @@ public
 .tmp
 .sass-cache
 .idea
-client/*
-!client/bower_components
 client/bower_components/*
 !client/bower_components/bootstrap-sass-official
 dist

@@ -3,5 +3,18 @@ $size_tile: 100px;
 .tile {
   width: $size_tile;
   height: $size_tile;
-  border: 2px solid red;
+  border: 2px solid #2B3E50;
+  font-size: 75px;
+}
+
+.bounce {
+ 	/* transition quand la souris quitte l'élément */
+	transition: border-radius 2s;
+}
+.bounce:hover {
+	transform: rotate(360deg);
+	border-radius: 10%;
+  border-width: 5px;
+	/* transition quand la souris survole */
+	transition: all 2s;
 }
