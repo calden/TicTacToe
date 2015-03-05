@@ -11,7 +11,16 @@
         </div>
         <div class="panel-body">
            <ul class="list-group" ng-repeat="game in games">
-             <li class="list-group-item list-group-item-success" ng-click="select(game)">{{game.player1}} vs {{game.player2}} </li>
+             <li class="list-group-item list-group-item-success" ng-click="select(game)">
+               <div class="row">
+                 <div class="pull-left">
+                 {{game.player1}} vs {{game.player2}}
+                </div>
+                <div class="pull-right">
+                rejoindre
+               </div>
+              </div>
+            </li>
            </ul>
         </div>
 

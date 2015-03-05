@@ -28,7 +28,9 @@ angular.module('ticTacToeApp')
        function checkWinnerGame(currentGame,signPlayer) {
           var winnerState = [[0,1,2],[0,4,8],[0,3,6],[1,4,7],[2,5,8],[2,4,6],[3,4,5],[6,7,8]] ;
           return _.some(winnerState,function (position) {
-             return _.every(position,function (index) { return currentGame.stateBoard.charAt(index)===signPlayer; });
+             return _.every(position,function (index) {
+               return currentGame.stateBoard.charAt(index)===signPlayer;
+               });
           });
        }
 
@@ -37,7 +39,7 @@ angular.module('ticTacToeApp')
          var state = currentGame.stateBoard;
          var sign = (numberUser === 1)? signPlayer1 : signPlayer2;
          currentGame.stateBoard =state.substring(0,pos)+sign+state.substring(pos+1,9);
-         if (checkWinnerGame(currentGame)) {
+         if (checkWinnerGame(currentGame,sign)) {
            currentGame.stateGame = "Over";
            currentGame.numberWinner = numberUser;
            Game.update(currentGame);
