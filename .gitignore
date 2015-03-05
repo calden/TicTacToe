@@ -3,7 +3,6 @@ public
 .tmp
 .sass-cache
 .idea
-client/bower_components/*
-!client/bower_components/bootstrap-sass-official
+client/bower_components
 dist
 /server/config/local.env.js
