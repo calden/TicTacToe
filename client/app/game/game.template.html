@@ -1,21 +1,26 @@
 <div class="row">
-  <div class="col-xs-11 col-xs-offset-1 col-sm-5 col-sm-offset-3 col-md-4 col-md-offset-4">
-  
+  <div class="row" ng-class="{ tileHide: isBlocked()}">
+  </div>
+  <div class="row text-center" ng-class="{ tileMessage: isMessageDisplay() }">
+    {{message()}}
+  </div>
+
     <div class="row">
-      <tile statetile="stateboard.charAt(0)"  position="0"/>
-      <tile  statetile="stateboard.charAt(1)" position="1" />
-      <tile statetile="stateboard.charAt(2)"  position="2"/>
+      <tile statetile="game.stateBoard.charAt(0)"  position="0"/>
+      <tile  statetile="game.stateBoard.charAt(1)" position="1" />
+      <tile statetile="game.stateBoard.charAt(2)"  position="2"/>
     </div>
     <div class="row">
-      <tile statetile="stateboard.charAt(3)" position="3"/>
-      <tile statetile="stateboard.charAt(4)" position="4"/>
-      <tile statetile="stateboard.charAt(5)" position="5"/>
+      <tile statetile="game.stateBoard.charAt(3)" position="3"/>
+      <tile statetile="game.stateBoard.charAt(4)" position="4"/>
+      <tile statetile="game.stateBoard.charAt(5)" position="5"/>
     </div>
     <div class="row">
-      <tile statetile="stateboard.charAt(6)" position="6"/>
-      <tile statetile="stateboard.charAt(7)" position="7"/>
-      <tile statetile="stateboard.charAt(8)" position="8"/>
+      <tile statetile="game.stateBoard.charAt(6)" position="6"/>
+      <tile statetile="game.stateBoard.charAt(7)" position="7"/>
+      <tile statetile="game.stateBoard.charAt(8)" position="8"/>
     </div>
 
- </div>
+
+
 </div>

@@ -1,7 +1,11 @@
 'use strict';
 
 angular.module('ticTacToeApp')
-  .controller('MainCtrl', function ($scope,games) {
+  .controller('MainCtrl',['$scope', '$state','games',function ($scope,$state,games) {
+    $scope.select = function (game) {
+      $scope.currentGame = game;
+      $state.go("main.gameboard");
+    }
     $scope.games = games ;
-    $scope.tableau = "__O_X_O___";
-  });
+
+  }]);

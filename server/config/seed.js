@@ -10,13 +10,13 @@ var Game = require('../api/game/game.model');
 
 Game.find({}).remove(function() {
   Game.create({
-    name: "Partie 1",
-    info: "X contre Y",
-    active: true
+    player1: "Test",
+    player2: "Admin",
+    stateGame: "Pending",
+    turnPlayer: 1
   }, {
-    name: "Parie 2",
-    info: "X contre Z",
-    active: false
+    player1: "Test",
+    stateGame: "Opened"
   }, function() {
       console.log('finished populating games');
     }
@@ -26,7 +26,7 @@ Game.find({}).remove(function() {
 User.find({}).remove(function() {
   User.create({
     provider: 'local',
-    name: 'Test User',
+    name: 'Test',
     email: 'test@test.com',
     password: 'test'
   }, {

@@ -109,9 +109,9 @@ $padding-xs-horizontal:     5px;
 $line-height-large:         1.3333333; // extra decimals for Win 8.1 Chrome
 $line-height-small:         1.5;
 
-$border-radius-base:        0;
-$border-radius-large:       0;
-$border-radius-small:       0;
+$border-radius-base:        10px;
+$border-radius-large:       10px;
+$border-radius-small:       10px;
 
 //** Global color for active items (e.g., navs or dropdowns).
 $component-active-color:    #fff;
@@ -700,8 +700,8 @@ $list-group-link-heading-color: $text-color;
 //##
 
 $panel-bg:                    $gray-light;
-$panel-body-padding:          15px;
-$panel-heading-padding:       10px 15px;
+$panel-body-padding:          0px;
+$panel-heading-padding:       0px 0px;
 $panel-footer-padding:        $panel-heading-padding;
 $panel-border-radius:         $border-radius-base;
 

@@ -22,7 +22,7 @@ angular.module('ticTacToeApp')
           // terminal: true,
           scope: {
             statetile: '=',
-             position: '@'
+            position: '@'
             // tilePlayed: '&'
           }, // {} = isolate, true = child, false/undefined = no change
           // require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements

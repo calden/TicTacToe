@@ -1,27 +1,56 @@
 'use strict';
 
 angular.module('ticTacToeApp')
-      .directive('gameBoard', ['$rootScope', function($rootScope){
-        function controllerGameBoard ($scope) {
+      .controller('controllerGameBoard',[
+        '$scope',
+        '$rootScope',
+        'signEmpty',
+        'signPlayer1',
+        'signPlayer2',
+        'Auth',
+        'gameService',
+        function ($scope,$rootScope,signEmpty,signPlayer1,signPlayer2,Auth,gameService) {
+
+          if (angular.isDefined(Auth.getCurrentUser().name)){
+            $scope.localPlayer = Auth.getCurrentUser();
+          } else {
+            $scope.localPlayer = undefined;
+          }
+
+          $scope.numberUserInGame = gameService.identifyPlayer($scope.game,angular.isDefined($scope.localPlayer)?$scope.localPlayer.name:"");
+          $scope.isMessageDisplay = function (game) {
+            return $scope.isBlocked() && $scope.numberUserInGame!==0;
+          }
           $rootScope.$on('tilePlayed', function(event, position) {
-            var pos = parseInt(position);
-            $scope.stateboard = $scope.stateboard.substring(0,pos)+"X"+$scope.stateboard.substring(pos+1,9);
+            gameService.playTurn($scope.game,position,$scope.numberUserInGame);
           });
-        };
-        // Runs during compile
+          $scope.isBlocked = function () {
+            return gameService.isBlocked($scope.game,$scope.numberUserInGame);
+          };
+          $scope.message = function () {
+            if ($scope.isMessageDisplay()) {
+              if ($scope.game.stateGame==="Over") {
+                if ($scope.numberUserInGame === $scope.game.numberWinner) {
+                  return "La partie est terminée. Vous avez gagné!";
+                } else {
+                  return "La partie est terminée. Vous avez perdu!";
+                }
+              }
+              if ($scope.numberUserInGame!==$scope.game.turnPlayer) {
+                return "Votre adversaire doit jouer!";
+              }
+            }
+            return "";
+          };
+        }])
+      .directive('gameBoard', [ function(){
+         // Runs during compile
         return {
-          // name: '',
-          // priority: 1,
-          // terminal: true,
           scope: {
-            stateboard: '='
-            // player: '@',
-            // opponent: '@',
-            // stateGame: '='
-          }, // {} = isolate, true = child, false/undefined = no change
-          // require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
+            game: '='
+          },
           restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
-          controller: controllerGameBoard,
+          controller: 'controllerGameBoard',
           templateUrl: 'app/game/game.template.html',
           replace: true,
           // transclude: true,

@@ -41,7 +41,12 @@ angular.module('ticTacToeApp', [
       }
     };
   })
-
+  .factory('_', ['$window',
+      function($window) {
+        // place lodash include before angular
+        return $window._;
+      }
+    ])
   .run(function ($rootScope, $location, Auth) {
     // Redirect to login if route requires auth and you're not logged in
     $rootScope.$on('$stateChangeStart', function (event, next) {
