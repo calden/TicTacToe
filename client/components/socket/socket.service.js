@@ -2,7 +2,7 @@
 'use strict';
 
 angular.module('ticTacToeApp')
-  .factory('socket', function(socketFactory) {
+  .factory('socket', ['socketFactory', 'Game', function(socketFactory, Game) {
 
     // socket.io now auto-configures its connection when we ommit a connection url
     var ioSocket = io('', {
@@ -15,60 +15,31 @@ angular.module('ticTacToeApp')
       ioSocket: ioSocket
     });
 
+
     return {
       socket: socket,
 
-      /**
-       * Register listeners to sync an array with updates on a model
-       *
-       * Takes the array we want to sync, the model name that socket updates are sent from,
-       * and an optional callback function after new items are updated.
-       *
-       * @param {String} modelName
-       * @param {Array} array
-       * @param {Function} cb
-       */
-      syncUpdates: function (modelName, array, cb) {
-        cb = cb || angular.noop;
 
-        /**
-         * Syncs item creation/updates on 'model:save'
-         */
-        socket.on(modelName + ':save', function (item) {
-          var oldItem = _.find(array, {_id: item._id});
-          var index = array.indexOf(oldItem);
-          var event = 'created';
-
-          // replace oldItem if it exists
-          // otherwise just add item to the collection
-          if (oldItem) {
-            array.splice(index, 1, item);
-            event = 'updated';
-          } else {
-            array.push(item);
-          }
-
-          cb(event, item, array);
+      manageGames: function(games){
+        socket.on('game:save', function(game){
+          var gameToUpdate = _.find(games, {_id:game._id});
+          gameToUpdate.stateBoard = game.stateBoard;
+          gameToUpdate.stateGame = game.stateGame;
+          gameToUpdate.turnPlayer = game.turnPlayer;
+        });
+        socket.on('game:remove', function(game){
+          _.remove(games, {_id: game._id});
+        });
+        socket.on('game:create', function(game){
+          games.push(new Game(game));
         });
 
-        /**
-         * Syncs removed items on 'model:remove'
-         */
-        socket.on(modelName + ':remove', function (item) {
-          var event = 'deleted';
-          _.remove(array, {_id: item._id});
-          cb(event, item, array);
-        });
       },
 
-      /**
-       * Removes listeners for a models updates on the socket
-       *
-       * @param modelName
-       */
-      unsyncUpdates: function (modelName) {
-        socket.removeAllListeners(modelName + ':save');
-        socket.removeAllListeners(modelName + ':remove');
+      removeListeners: function () {
+        socket.removeAllListeners('game:save');
+        socket.removeAllListeners('game:remove');
+        socket.removeAllListeners('game:create');
       }
     };
-  });
+  }]);
