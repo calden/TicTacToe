@@ -8,14 +8,14 @@
       <div class="panel panel-default">
         <div class="panel-heading">
           <div class="pull-right">
-          <button class="btn btn-primary" type="button">
+          <button class="btn btn-primary" ng-click="newGame()" type="button">
             Créer partie
           </button>
           </div>
           <div class="panel-title"><h5>Liste des parties</h5></div>
-          
+
           </div>
-         
+
         <div class="panel-body">
            <div class="list-group" ng-repeat="game in games">
              <div class="list-group-item" ng-click="select(game)">
@@ -25,7 +25,7 @@
                 <div>
                  {{game.player1}} vs {{game.player2}}
                 </div>
-           
+
             </div>
            </div>
         </div>

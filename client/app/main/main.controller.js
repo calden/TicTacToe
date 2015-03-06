@@ -6,7 +6,10 @@ angular.module('ticTacToeApp')
     $scope.select = function (game) {
       $scope.currentGame = game;
       $state.go("main.gameboard");
-    }
+    };
+    $scope.newGame = function (){
+      $state.go("main.creategame");
+    };
     $scope.games = games ;
 
     $scope.$on('$destroy', function(){

@@ -10,8 +10,7 @@ angular.module('ticTacToeApp')
     return $resource('/api/games/:id', {
       id: '@_id'
     },
-    {
-      update: {
+    { update: {
         method: 'PUT'
       },
       get: {
@@ -19,7 +18,7 @@ angular.module('ticTacToeApp')
       },
       getAll: {
         method:'GET',
-       isArray:true
+        isArray:true
        },
 	  });
   })
