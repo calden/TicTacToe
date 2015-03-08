@@ -13,7 +13,4 @@ exports.register = function(socket) {
   Game.schema.post('remove', function (doc) {
     socket.emit('game:remove', doc);
   });
-  Game.schema.post('create', function(doc){
-    socket.emit('game:create', doc)
-  })
 }
