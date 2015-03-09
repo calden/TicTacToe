@@ -6,7 +6,7 @@ angular.module('ticTacToeApp')
   .constant('signEmpty','_')
   .constant('player1','1')
   .constant('player2','2')
-  .factory('Game', function ($resource) {
+  .factory('Game', ['$resource', 'Auth', function ($resource, Auth) {
     var game = $resource('/api/games/:id', {
       id: '@_id'
     },
@@ -21,12 +21,12 @@ angular.module('ticTacToeApp')
         isArray:true
        },
 	  });
-    game.prototype.isOpened = function(){
-      return this.stateGame === 'Opened';
+    game.prototype.canJoin = function(login){
+      return this.stateGame === 'Opened' && this.player1 !== Auth.getCurrentUser().name;
     };
-    
+
     return game;
-  })
+  }])
   .service('gameService',['_','Game','signPlayer1','signPlayer2', function(_,Game,signPlayer1, signPlayer2) {
 
        function checkWinnerGame(currentGame,signPlayer) {
