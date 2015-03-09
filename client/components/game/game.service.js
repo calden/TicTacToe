@@ -7,7 +7,7 @@ angular.module('ticTacToeApp')
   .constant('player1','1')
   .constant('player2','2')
   .factory('Game', function ($resource) {
-    return $resource('/api/games/:id', {
+    var game = $resource('/api/games/:id', {
       id: '@_id'
     },
     { update: {
@@ -21,6 +21,11 @@ angular.module('ticTacToeApp')
         isArray:true
        },
 	  });
+    game.prototype.isOpened = function(){
+      return this.stateGame === 'Opened';
+    };
+    
+    return game;
   })
   .service('gameService',['_','Game','signPlayer1','signPlayer2', function(_,Game,signPlayer1, signPlayer2) {
 
