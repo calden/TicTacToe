@@ -4,12 +4,12 @@ angular.module('ticTacToeApp')
   .controller('MainCtrl',['$scope', '$state','games', 'socket', 'Auth',function ($scope,$state,games, socket, Auth) {
     socket.manageGames(games);
     $scope.select = function (game) {
-      $scope.currentGame = game;
-      $state.go("main.gameboard");
+      $state.go("main.gameboard", {idGame: game._id});
     };
-    $scope.newGame = function (){
+    $scope.createGame = function (){
       $state.go("main.creategame");
     };
+
     $scope.games = games ;
 
     $scope.join = function(game){
@@ -21,5 +21,5 @@ angular.module('ticTacToeApp')
     $scope.$on('$destroy', function(){
       socket.removeListeners();
     })
-
+    
   }]);

@@ -22,7 +22,11 @@ angular.module('ticTacToeApp')
 
       manageGames: function(games){
         socket.on('game:save', function(game){
+          console.log('games ');
+          console.log(games);
+          console.log('gameid '+game._id);
           var gameToUpdate = _.find(games, {_id:game._id});
+          console.log(gameToUpdate);
           gameToUpdate.stateBoard = game.stateBoard;
           gameToUpdate.stateGame = game.stateGame;
           gameToUpdate.turnPlayer = game.turnPlayer;

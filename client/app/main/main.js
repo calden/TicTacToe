@@ -14,11 +14,19 @@ angular.module('ticTacToeApp')
         controller: 'MainCtrl'
       })
       .state('main.gameboard', {
-        url: "/gameboard",
-        templateUrl: 'app/main/gameboard.html'
+        url: "gameboard/:idGame",
+        resolve: {
+          activeGame: ['games','$stateParams', function(games, $stateParams) {
+             return _.find(games, function(game) { return game._id === $stateParams.idGame;});
+         }]
+        },
+        templateUrl: 'app/main/gameboard.html',
+        controller: function ($scope, activeGame) {
+          $scope.activeGame = activeGame;
+        }
       })
       .state('main.creategame', {
-        url: "/creategame",
+        url: "creategame",
         templateUrl: 'app/main/creategame.html'
       });
   });

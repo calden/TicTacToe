@@ -8,6 +8,7 @@ var Game = require('./game.model');
 
 exports.register = function(socket) {
   Game.on('game:save', function (doc) {
+    console.log(doc._id);
     socket.emit('game:save', doc);
   });
   Game.on('game:remove', function (doc) {
