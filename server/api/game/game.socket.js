@@ -7,13 +7,14 @@
 var Game = require('./game.model');
 
 exports.register = function(socket) {
-  Game.schema.post('save', function (doc) {
+  Game.on('game:save', function (doc) {
     socket.emit('game:save', doc);
   });
-  Game.schema.post('remove', function (doc) {
+  Game.on('game:remove', function (doc) {
     socket.emit('game:remove', doc);
   });
-  Game.schema.post('create', function(doc){
-    socket.emit('game:create', doc)
-  })
+  Game.on('game:create', function (doc) {
+    socket.emit('game:create', doc);
+  });
+
 }
