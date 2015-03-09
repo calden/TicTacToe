@@ -10,7 +10,7 @@ angular.module('socketMock', [])
         receive: function() {}
       },
 
-      syncUpdates: function() {},
-      unsyncUpdates: function() {}
+      manageGames: function() {},
+      removeListeners: function() {}
     };
   });
