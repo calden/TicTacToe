@@ -2,6 +2,7 @@
 
 var _ = require('lodash');
 var Game = require('./game.model');
+var events = require('events');
 
 // Get list of games
 exports.index = function(req, res) {
@@ -24,6 +25,7 @@ exports.show = function(req, res) {
 exports.create = function(req, res) {
   Game.create(req.body, function(err, game) {
     if(err) { return handleError(res, err); }
+    Game.emit('game:create', game);
     return res.json(201, game);
   });
 };
@@ -37,6 +39,7 @@ exports.update = function(req, res) {
     var updated = _.merge(game, req.body);
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
+      Game.emit('game:save', game);
       return res.json(200, game);
     });
   });
@@ -49,6 +52,7 @@ exports.destroy = function(req, res) {
     if(!game) { return res.send(404); }
     game.remove(function(err) {
       if(err) { return handleError(res, err); }
+      Game.emit('game:remove', game);
       return res.send(204);
     });
   });
