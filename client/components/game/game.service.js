@@ -33,6 +33,13 @@ angular.module('ticTacToeApp')
           });
        }
 
+       function checkDraw(currentGame) {
+          return !_.some(currentGame.stateBoard,function (position) {
+            return position === '_';
+          });
+
+       }
+
        function playTurn(currentGame,position,numberUser) {
          var pos = parseInt(position);
          var state = currentGame.stateBoard;
@@ -41,9 +48,15 @@ angular.module('ticTacToeApp')
          if (checkWinnerGame(currentGame,sign)) {
            currentGame.stateGame = "Over";
            currentGame.numberWinner = numberUser;
-           Game.update(currentGame);
+         } else {
+            if (checkDraw(currentGame)) {
+               currentGame.stateGame = "Over";
+               currentGame.numberWinner = 0;
+            }
+            else {
+              currentGame.turnPlayer = (numberUser === 1) ? 2 : 1;
+            }
          }
-         currentGame.turnPlayer = (numberUser === 1) ? 2 : 1;
          Game.update(currentGame);
        }
 
