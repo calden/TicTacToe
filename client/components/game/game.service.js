@@ -21,8 +21,11 @@ angular.module('ticTacToeApp')
         isArray:true
        },
 	  });
-    game.prototype.canJoin = function(login){
+    game.prototype.canJoin = function(){
       return this.stateGame === 'Opened' && this.player1 !== Auth.getCurrentUser().name;
+    };
+    game.prototype.canTrash = function(){
+      return this.player1 === Auth.getCurrentUser().name;
     };
 
     return game;
