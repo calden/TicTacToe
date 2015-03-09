@@ -10,7 +10,7 @@ angular.module('ticTacToeApp')
           $scope.gameCreated = false;
           $scope.firstPlayer = true;
           $scope.newGame = {
-            player1: "Test",
+            player1: Auth.getCurrentUser().name,
             player2: ""
           };
           $scope.validateNewGame = function () {
