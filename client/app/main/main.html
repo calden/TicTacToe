@@ -18,15 +18,18 @@
 
             <div class="panel-body">
             <div class="list-group" ng-repeat="game in games">
-              <div class="list-group-item" >
+              <div class="list-group-item">
                 <div class="pull-right">
-                <button class="btn btn-xs btn-primary" ng-click="select(game)" type="button">
-                  Voir
-                </button>
+                  <button type="button" class="btn btn-danger btn-xs" ng-show="game.canTrash()" ng-click="game.$remove()">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Supprimer
+                  </button>
+                  <button class="btn btn-xs btn-primary" ng-click="select(game)" type="button">
+                    Voir
+                  </button>
                 </div>
-                 <div>
+                 <div ng-class="">
                   {{game.player1}} vs {{game.player2}}
-                  <button class="btn btn-primary" ng-show="game.isOpened()" ng-click="join(game)" type="button">
+                  <button class="btn btn-primary" ng-show="game.canJoin()" ng-click="join(game)" type="button">
                     Joindre
                   </button>
                  </div>

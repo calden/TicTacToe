@@ -33,13 +33,10 @@ exports.create = function(req, res) {
 // Updates an existing game in the DB.
 exports.update = function(req, res) {
   if(req.body._id) { delete req.body._id; }
-  console.log("before find"+req.params.id);
   Game.findById(req.params.id, function (err, game) {
-    console.log(game._id);
     if (err) { return handleError(res, err); }
     if(!game) { return res.send(404); }
     var updated = _.merge(game, req.body);
-    console.log("before updated"+game._id);
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
       Game.emit('game:save', game);
