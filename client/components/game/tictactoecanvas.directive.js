@@ -6,7 +6,7 @@ angular.module('ticTacToeApp')
   ['$scope', '$rootScope', 'signEmpty', 'signPlayer1', 'signPlayer2', 'Auth', 'gameService', 'ticTacToeRenderer',
     function ($scope, $rootScope, signEmpty, signPlayer1, signPlayer2, Auth, gameService, TicTacToeRenderer) {
 
-      var renderer, messageTarget = 'center';
+      var renderer, messageTarget = 'center', currentMessageTarget = 'center';
 
       if (angular.isDefined(Auth.getCurrentUser().name)) {
         $scope.localPlayer = Auth.getCurrentUser();
@@ -22,8 +22,12 @@ angular.module('ticTacToeApp')
         return gameService.isBlocked($scope.game, numberUserInGame());
       }
 
+      function isMessageDisplay() {
+        return isBlocked() && numberUserInGame() !== 0;
+      }
+
       function getMessage() {
-        if (isMessageDisplay()) {
+        //if (isMessageDisplay()) {
           if ($scope.game.stateGame === 'Over') {
             if (numberUserInGame() === $scope.game.numberWinner) {
               messageTarget = 'victory';
@@ -32,28 +36,33 @@ angular.module('ticTacToeApp')
               if ($scope.game.numberWinner !== 0) {
                 messageTarget = 'loose';
                 return 'Vous avez perdu !';
+              } else {
+                messageTarget = 'victory';
+                return 'Match nul !';
               }
-              messageTarget = 'victory';
-              return 'Match nul !';
             }
           } else if ($scope.game.stateGame === 'Opened') {
             return 'En attente de joueurs';
           } else if (numberUserInGame() !== $scope.game.turnPlayer) {
             return 'Attente de votre adversaire !';
           }
-        }
+        //}
+
         return undefined;
       }
 
       function updateMessage() {
-        renderer.setMessage(messageTarget, getMessage());
-      }
-
-      function isMessageDisplay() {
-        return isBlocked() && numberUserInGame() !== 0;
+        var msg = getMessage();
+        renderer.setMessage(messageTarget, msg);
+        if (messageTarget !== currentMessageTarget) {
+          renderer.setMessage(currentMessageTarget, undefined);
+          currentMessageTarget = messageTarget;
+        }
       }
 
       function syncBoard() {
+
+        console.log('Game updated', $scope.game.stateGame/*, $scope.game*/);
 
         var gameState = $scope.game.stateBoard;
 

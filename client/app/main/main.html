@@ -1,56 +1,56 @@
 <div ng-include="'components/navbar/navbar.html'"></div>
 
 
-
 <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-            <div class="pull-right">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <div class="pull-right">
             <button class="btn btn-primary" ng-click="createGame()" type="button">
               Créer partie
             </button>
-            </div>
-            <div class="panel-title"><h5>Liste des parties</h5></div>
+          </div>
+          <div class="panel-title"><h5>Liste des parties</h5></div>
 
-            </div>
-
-            <div class="panel-body">
-            <div class="list-group" ng-repeat="game in games">
-              <div class="list-group-item">
-                <div class="pull-right">
-                  <button type="button" class="btn btn-danger btn-xs" ng-show="game.canTrash()" ng-click="game.$remove()">
-                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Supprimer
-                  </button>
-                  <button class="btn btn-xs btn-primary" ng-click="select(game)" type="button">
-                    Voir
-                  </button>
-                </div>
-                 <div ng-class="">
-                  {{game.player1}} vs {{game.player2}}
-                  <button class="btn btn-primary" ng-show="game.canJoin()" ng-click="join(game)" type="button">
-                    Joindre
-                  </button>
-                 </div>
-
-             </div>
-            </div>
-            </div>
         </div>
-      </div>
-      <div class="col-md-6">
-        <div class="row-fluid">
-            <div ui-view class="pull-left"></div>
+
+        <div class="panel-body">
+          <div class="list-group" ng-repeat="game in games">
+            <div class="list-group-item">
+              <div class="pull-right">
+                <button type="button" class="btn btn-danger btn-xs" ng-show="game.canTrash()" ng-click="game.$remove()">
+                  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Supprimer
+                </button>
+                <button class="btn btn-xs btn-primary" ng-click="select(game)" type="button">
+                  Voir
+                </button>
+              </div>
+
+              <div ng-class="">
+                {{game.player1}} vs {{game.player2}}
+                <button class="btn btn-primary" ng-show="game.canJoin()" ng-click="join(game)" type="button">
+                  Joindre
+                </button>
+              </div>
+
+            </div>
+          </div>
         </div>
       </div>
     </div>
+    <div class="col-md-6">
+      <div class="row-fluid">
+        <div ui-view class="pull-left"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <footer class="footer">
   <div class="container">
-      <p>Angular Fullstack v2.0.13 |
-        <a href="https://twitter.com/mdebonnaire">@mdebonnaire</a>
-      </p>
+    <p>Angular Fullstack v2.0.13 |
+      <a href="https://twitter.com/mdebonnaire">@mdebonnaire</a>
+    </p>
   </div>
 </footer>

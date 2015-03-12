@@ -25,7 +25,9 @@ angular.module('ticTacToeApp')
           gameToUpdate.stateBoard = game.stateBoard;
           gameToUpdate.stateGame = game.stateGame;
           gameToUpdate.turnPlayer = game.turnPlayer;
+          gameToUpdate.player1 = game.player1;
           gameToUpdate.player2 = game.player2;
+          gameToUpdate.numberWinner = game.numberWinner;
           // Notify game update
           gameToUpdate.triggerChange();
         });
