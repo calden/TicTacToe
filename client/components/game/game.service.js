@@ -102,7 +102,7 @@ angular.module('ticTacToeApp')
     }
 
     function isBlocked(currentGame, numberUser) {
-      return !(numberUser === currentGame.turnPlayer && currentGame.stateGame !== 'Over');
+      return !(numberUser === currentGame.turnPlayer && currentGame.stateGame === 'Pending'); //&& currentGame.stateGame !== 'Over' && currentGame.stateGame !== 'Opened');
     }
 
     function identifyPlayer(currentGame, name) {

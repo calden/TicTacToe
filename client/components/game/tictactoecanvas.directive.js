@@ -34,6 +34,9 @@ angular.module('ticTacToeApp')
               return 'La partie est terminée. Match nul!';
             }
           }
+          if ($scope.game.stateGame === 'Opened') {
+            return 'En attente de joueurs';
+          }
           if (numberUserInGame() !== $scope.game.turnPlayer) {
             return 'Attente de votre adversaire !';
           }
@@ -72,30 +75,35 @@ angular.module('ticTacToeApp')
           }
         );
 
-        updateMessage();
+        updateGameState();
       }
 
-      function playerTurnRequestHandler(cell) {
-
-        var player;
+      function updateGameState() {
 
         // Update board message
         updateMessage();
 
         // block the board
         if (isBlocked()) {
-          if (!renderer.blocked) {
-            renderer.blocked = true;
+          if (!renderer.locked) {
+            renderer.locked = true;
           }
-          return;
         } else {
-          if (renderer.blocked) {
-            renderer.blocked = false;
+          if (renderer.locked) {
+            renderer.locked = false;
           }
         }
 
+      }
+
+      function playerTurnRequestHandler(cell) {
+
+        var player;
+
+        updateGameState()
+
         // Cell is not empty
-        if (cell.state !== undefined) {
+        if (cell === undefined || cell.state !== undefined) {
           return;
         }
 
@@ -126,6 +134,9 @@ angular.module('ticTacToeApp')
 
         // On remote update received
         $scope.game.onChange(syncBoard);
+
+        // Message and game locked state update
+        updateGameState()
 
       };
 
