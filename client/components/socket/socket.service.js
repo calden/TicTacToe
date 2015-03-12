@@ -27,6 +27,8 @@ angular.module('ticTacToeApp')
           gameToUpdate.stateGame = game.stateGame;
           gameToUpdate.turnPlayer = game.turnPlayer;
           gameToUpdate.player2 = game.player2;
+          // Notify game update
+          gameToUpdate.triggerChange();
         });
         socket.on('game:remove', function(game){
           _.remove(games, {_id: game._id});

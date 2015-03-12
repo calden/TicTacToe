@@ -28,6 +28,30 @@ angular.module('ticTacToeApp')
       return this.player1 === Auth.getCurrentUser().name;
     };
 
+    // TODO : Ajout EventEmitter sur l'instance, à voir...
+    game.prototype.onChange = function (fn) {
+      if (this._updHandler === undefined) {
+        this._updHandler = [];
+      }
+      this._updHandler.push(fn)
+    };
+    game.prototype.triggerChange = function (propertyName, oldvalue) {
+      if (this._updHandler !== undefined) {
+        this._updHandler.forEach(function (fn) {
+          fn.call(this, propertyName, oldvalue)
+        });
+      }
+    };
+    game.prototype.offChange = function (fn) {
+      if (this._updHandler === undefined) {
+        return;
+      }
+      console.log("Before remove change listener", this._updHandler)
+      var index = this._updHandler.indexOf(fn);
+      this._updHandler.splice(index, 1);
+      console.log("After remove change listener", this._updHandler)
+    };
+
     return game;
   }])
   .service('gameService',['_','Game','signPlayer1','signPlayer2', function(_,Game,signPlayer1, signPlayer2) {
