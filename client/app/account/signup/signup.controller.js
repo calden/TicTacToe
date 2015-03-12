@@ -2,7 +2,9 @@
 
 angular.module('ticTacToeApp')
   .controller('SignupCtrl', function ($scope, Auth, $location, $window) {
+
     $scope.user = {};
+
     $scope.errors = {};
 
     $scope.register = function(form) {
@@ -34,4 +36,5 @@ angular.module('ticTacToeApp')
     $scope.loginOauth = function(provider) {
       $window.location.href = '/auth/' + provider;
     };
+
   });

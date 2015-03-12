@@ -2,7 +2,7 @@
 'use strict';
 
 angular.module('ticTacToeApp')
-  .factory('socket', ['socketFactory', 'Game', function(socketFactory, Game) {
+  .factory('socket', ['socketFactory', 'Game', function (socketFactory, Game) {
 
     // socket.io now auto-configures its connection when we ommit a connection url
     var ioSocket = io('', {
@@ -15,14 +15,13 @@ angular.module('ticTacToeApp')
       ioSocket: ioSocket
     });
 
-
     return {
+
       socket: socket,
 
-
-      manageGames: function(games){
-        socket.on('game:save', function(game){
-          var gameToUpdate = _.find(games, {_id:game._id});
+      manageGames: function (games) {
+        socket.on('game:save', function (game) {
+          var gameToUpdate = _.find(games, {_id: game._id});
           gameToUpdate.stateBoard = game.stateBoard;
           gameToUpdate.stateGame = game.stateGame;
           gameToUpdate.turnPlayer = game.turnPlayer;
@@ -30,10 +29,10 @@ angular.module('ticTacToeApp')
           // Notify game update
           gameToUpdate.triggerChange();
         });
-        socket.on('game:remove', function(game){
+        socket.on('game:remove', function (game) {
           _.remove(games, {_id: game._id});
         });
-        socket.on('game:create', function(game){
+        socket.on('game:create', function (game) {
           games.push(new Game(game));
         });
 
@@ -44,5 +43,6 @@ angular.module('ticTacToeApp')
         socket.removeAllListeners('game:remove');
         socket.removeAllListeners('game:create');
       }
+
     };
   }]);

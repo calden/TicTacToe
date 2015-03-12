@@ -4,18 +4,18 @@ angular.module('ticTacToeApp')
   .controller(
   'controllerTictactoeCanvas',
   ['$scope', '$rootScope', 'signEmpty', 'signPlayer1', 'signPlayer2', 'Auth', 'gameService', 'ticTacToeRenderer',
-    function ($scope,$rootScope,signEmpty,signPlayer1,signPlayer2,Auth,gameService, tttRenderer) {
+    function ($scope, $rootScope, signEmpty, signPlayer1, signPlayer2, Auth, gameService, TicTacToeRenderer) {
 
       var renderer;
 
-      if (angular.isDefined(Auth.getCurrentUser().name)){
+      if (angular.isDefined(Auth.getCurrentUser().name)) {
         $scope.localPlayer = Auth.getCurrentUser();
       } else {
         $scope.localPlayer = undefined;
       }
 
       function numberUserInGame() {
-        return gameService.identifyPlayer($scope.game,angular.isDefined($scope.localPlayer)?$scope.localPlayer.name:"");
+        return gameService.identifyPlayer($scope.game, angular.isDefined($scope.localPlayer) ? $scope.localPlayer.name : '');
       }
 
       function isBlocked() {
@@ -24,28 +24,29 @@ angular.module('ticTacToeApp')
 
       function getMessage() {
         if (isMessageDisplay()) {
-          if ($scope.game.stateGame==="Over") {
+          if ($scope.game.stateGame === 'Over') {
             if (numberUserInGame() === $scope.game.numberWinner) {
-              return "La partie est terminée. Vous avez gagné!";
+              return 'La partie est terminée. Vous avez gagné!';
             } else {
-              if ($scope.game.numberWinner!==0) {
-                return "La partie est terminée. Vous avez perdu!";
+              if ($scope.game.numberWinner !== 0) {
+                return 'La partie est terminée. Vous avez perdu!';
               }
-              return "La partie est terminée. Match nul!";
+              return 'La partie est terminée. Match nul!';
             }
           }
-          if (numberUserInGame()!==$scope.game.turnPlayer) {
-            return "Attente de votre adversaire !";
+          if (numberUserInGame() !== $scope.game.turnPlayer) {
+            return 'Attente de votre adversaire !';
           }
         }
         return undefined;
       }
+
       function updateMessage() {
-        renderer.setMessage("center", getMessage());
+        renderer.setMessage('center', getMessage());
       }
 
-      function isMessageDisplay(game) {
-        return isBlocked() && numberUserInGame()!==0;
+      function isMessageDisplay() {
+        return isBlocked() && numberUserInGame() !== 0;
       }
 
       function syncBoard() {
@@ -55,11 +56,11 @@ angular.module('ticTacToeApp')
           function (cell) {
 
             var remoteSate;
-            switch(gameState.charAt(cell.index)) {
-            case "X":
+            switch (gameState.charAt(cell.index)) {
+            case 'X':
               remoteSate = 1;
               break;
-            case "O":
+            case 'O':
               remoteSate = 2;
               break;
             }
@@ -104,20 +105,20 @@ angular.module('ticTacToeApp')
         renderer.setPlayerTurn(cell.ix, cell.iy, player);
 
         // Send to server
-        gameService.playTurn($scope.game, cell.index , player);
+        gameService.playTurn($scope.game, cell.index, player);
 
         updateMessage();
       }
 
-      this.init = function(options) {
+      this.init = function (options) {
 
         if ($scope.game === undefined) {
           // TODO : Recup jeux en cours (cas du refresh de page)
-          console.error("Instance game non injecté");
+          console.error('Instance game non injecté');
           return;
         }
 
-        renderer = new tttRenderer(options);
+        renderer = new TicTacToeRenderer(options);
 
         syncBoard();
 
@@ -143,7 +144,7 @@ angular.module('ticTacToeApp')
       });
 
     }])
-  .directive('tictactoeCanvas', [ function(){
+  .directive('tictactoeCanvas', [function () {
     // Runs during compile
     return {
       scope: {
@@ -153,21 +154,29 @@ angular.module('ticTacToeApp')
       controller: 'controllerTictactoeCanvas',
       template: '<div class="tictactoeContainer"></div>',
       replace: true,
-      link: function($scope, elem, attrs, controller) {
+      link: function ($scope, elem, attrs, controller) {
 
         var options = {
           container: elem,
           width: attrs.gameWidth || 3,
           height: attrs.gameHeight || 3,
           colors: {
-            bg: "rgba(0,0,0,1)",
-            grid: "blue",
-            p1: "rgba(0,255,0,1)",
-            p2: "rgba(200,0,0,1)"
+            bg: 'rgba(0,0,0,1)',              // Background color
+            grid: 'blue',                     // Grid line color
+            p1: 'rgba(0,255,0,1)',            // Player 1 color
+            p2: 'rgba(200,0,0,1)'             // PLayer 2 Color
           },
-          draw: { p1: "cross", p2: "circle" },
-          messages: [
-            { id: "center", position: "center", fontSize: 24, font: "Verdana", text: undefined, color: "rgba(255, 255, 255, 0.5)", bgcolor: "rgba(100, 0, 0, 0.5)" }
+          draw: {p1: 'cross', p2: 'circle'},  // Players drawing forms
+          messages: [                         // Canvas message board definition
+            {
+              id: 'center',                       // Id used for setMessage method
+              position: 'center',                 // Message position in canvas 'center' or 'x,y' in pixel units
+              fontSize: 24,                       // Text font size
+              font: 'Verdana',                    // Text font family
+              text: undefined,                    // Initial text value (undefined if hide)
+              color: 'rgba(255, 255, 255, 0.5)',  // Text color
+              bgcolor: 'rgba(100, 0, 0, 0.5)'     // Text background color
+            }
           ]
         };
 

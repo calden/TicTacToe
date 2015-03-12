@@ -406,10 +406,10 @@ module.exports = function (grunt) {
     // Run some tasks in parallel to speed up the build process
     concurrent: {
       server: [
-        'sass',
+        'sass'
       ],
       test: [
-        'sass',
+        'sass'
       ],
       debug: {
         tasks: [
@@ -543,7 +543,9 @@ module.exports = function (grunt) {
           ]
         }
       }
-    },
+
+
+    }
   });
 
   // Used for delaying livereload until after server has restarted
@@ -665,5 +667,9 @@ module.exports = function (grunt) {
     'newer:jshint',
     'test',
     'build'
+  ]);
+
+  grunt.registerTask('quality-check', [
+    'newer:jshint'
   ]);
 };
