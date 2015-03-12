@@ -22,9 +22,9 @@ angular.module('ticTacToeApp')
         return gameService.isBlocked($scope.game, numberUserInGame());
       }
 
-      function isMessageDisplay() {
+      /*function isMessageDisplay() {
         return isBlocked() && numberUserInGame() !== 0;
-      }
+      }*/
 
       function getMessage() {
         //if (isMessageDisplay()) {
@@ -147,7 +147,7 @@ angular.module('ticTacToeApp')
         $scope.game.onChange(syncBoard);
 
         // Message and game locked state update
-        updateGameState()
+        updateGameState();
 
       };
 
