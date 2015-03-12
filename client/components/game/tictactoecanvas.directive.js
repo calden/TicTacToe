@@ -6,7 +6,7 @@ angular.module('ticTacToeApp')
   ['$scope', '$rootScope', 'signEmpty', 'signPlayer1', 'signPlayer2', 'Auth', 'gameService', 'ticTacToeRenderer',
     function ($scope, $rootScope, signEmpty, signPlayer1, signPlayer2, Auth, gameService, TicTacToeRenderer) {
 
-      var renderer;
+      var renderer, messageTarget = 'center';
 
       if (angular.isDefined(Auth.getCurrentUser().name)) {
         $scope.localPlayer = Auth.getCurrentUser();
@@ -26,18 +26,19 @@ angular.module('ticTacToeApp')
         if (isMessageDisplay()) {
           if ($scope.game.stateGame === 'Over') {
             if (numberUserInGame() === $scope.game.numberWinner) {
-              return 'La partie est terminée. Vous avez gagné!';
+              messageTarget = 'victory';
+              return 'Vous avez gagné !';
             } else {
               if ($scope.game.numberWinner !== 0) {
-                return 'La partie est terminée. Vous avez perdu!';
+                messageTarget = 'loose';
+                return 'Vous avez perdu !';
               }
-              return 'La partie est terminée. Match nul!';
+              messageTarget = 'victory';
+              return 'Match nul !';
             }
-          }
-          if ($scope.game.stateGame === 'Opened') {
+          } else if ($scope.game.stateGame === 'Opened') {
             return 'En attente de joueurs';
-          }
-          if (numberUserInGame() !== $scope.game.turnPlayer) {
+          } else if (numberUserInGame() !== $scope.game.turnPlayer) {
             return 'Attente de votre adversaire !';
           }
         }
@@ -45,7 +46,7 @@ angular.module('ticTacToeApp')
       }
 
       function updateMessage() {
-        renderer.setMessage('center', getMessage());
+        renderer.setMessage(messageTarget, getMessage());
       }
 
       function isMessageDisplay() {
@@ -53,6 +54,7 @@ angular.module('ticTacToeApp')
       }
 
       function syncBoard() {
+
         var gameState = $scope.game.stateBoard;
 
         renderer.forEachCell(
@@ -100,7 +102,7 @@ angular.module('ticTacToeApp')
 
         var player;
 
-        updateGameState()
+        updateGameState();
 
         // Cell is not empty
         if (cell === undefined || cell.state !== undefined) {
@@ -167,30 +169,50 @@ angular.module('ticTacToeApp')
       replace: true,
       link: function ($scope, elem, attrs, controller) {
 
+        // Set game board options
         var options = {
           container: elem,
           width: attrs.gameWidth || 3,
           height: attrs.gameHeight || 3,
           colors: {
-            bg: 'rgba(0,0,0,1)',              // Background color
-            grid: 'blue',                     // Grid line color
-            p1: 'rgba(0,255,0,1)',            // Player 1 color
-            p2: 'rgba(200,0,0,1)'             // PLayer 2 Color
+            bg: '#F8F8F8',                        // Background color
+            grid: 'blue',                         // Grid line color
+            p1: 'rgba(0,255,0,1)',                // Player 1 color
+            p2: 'rgba(200,0,0,1)'                 // PLayer 2 Color
           },
-          draw: {p1: 'cross', p2: 'circle'},  // Players drawing forms
-          messages: [                         // Canvas message board definition
+          draw: {p1: 'cross', p2: 'circle'},      // Players drawing forms
+          messages: [                             // Canvas message board definition
             {
-              id: 'center',                       // Id used for setMessage method
-              position: 'center',                 // Message position in canvas 'center' or 'x,y' in pixel units
-              fontSize: 24,                       // Text font size
-              font: 'Verdana',                    // Text font family
-              text: undefined,                    // Initial text value (undefined if hide)
-              color: 'rgba(255, 255, 255, 0.5)',  // Text color
-              bgcolor: 'rgba(100, 0, 0, 0.5)'     // Text background color
+              id: 'center',                           // Id used for setMessage method
+              position: 'center',                     // Message position in canvas 'center' or 'x,y' in pixel units
+              fontSize: 24,                           // Text font size
+              font: 'Verdana',                        // Text font family
+              text: undefined,                        // Initial text value (undefined if hide)
+              color: 'rgba(255, 255, 255, 0.5)',      // Text color
+              bgcolor: 'rgba(100, 0, 0, 0.5)'         // Text background color
+            },
+            {
+              id: 'victory',                          // Color and font size for victory message
+              position: 'center',
+              fontSize: 36,
+              font: 'Verdana',
+              text: undefined,
+              color: 'rgba(255, 255, 255, 1)',
+              bgcolor: 'rgba(0,150,0,0.8)'
+            },
+            {
+              id: 'loose',                           // Color and font size for defeat message
+              position: 'center',
+              fontSize: 36,
+              font: 'Verdana',
+              text: undefined,
+              color: 'rgba(255, 255, 255, 1)',
+              bgcolor: 'rgba(100,0,0,0.5)'
             }
           ]
         };
 
+        // Start game render
         controller.init(options);
 
       }

@@ -121,8 +121,9 @@ angular.module('ticTacToeApp')
         options.draw = options.draw || {};
         options.draw.p1 = options.draw.p1 || defOptions.draw.p1;
         options.draw.p2 = options.draw.p2 || defOptions.draw.p2;
-        bx = gameSize.width / 100;
-        by = gameSize.height / 100;
+        // Proportianal border size
+        bx = gameSize.width / 70;
+        by = gameSize.height / 70;
         bx2 = bx * 2;
         by2 = by * 2;
         bmi = Math.min(bx, by);
