@@ -20,6 +20,10 @@ angular.module('ticTacToeApp')
         method:'GET',
         isArray:true
        },
+       playTurn: {
+          method: 'POST',
+          url: '/api/games/:id/:position'
+       }
 	  });
     game.prototype.canJoin = function(){
       return this.stateGame === 'Opened' && this.player1 !== Auth.getCurrentUser().name;
@@ -53,19 +57,6 @@ angular.module('ticTacToeApp')
          var state = currentGame.stateBoard;
          var sign = (numberUser === 1)? signPlayer1 : signPlayer2;
          currentGame.stateBoard =state.substring(0,pos)+sign+state.substring(pos+1,9);
-         if (checkWinnerGame(currentGame,sign)) {
-           currentGame.stateGame = "Over";
-           currentGame.numberWinner = numberUser;
-         } else {
-            if (checkDraw(currentGame)) {
-               currentGame.stateGame = "Over";
-               currentGame.numberWinner = 0;
-            }
-            else {
-              currentGame.turnPlayer = (numberUser === 1) ? 2 : 1;
-            }
-         }
-         Game.update(currentGame);
        }
 
        function isBlocked(currentGame,numberUser) {

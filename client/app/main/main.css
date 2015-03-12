@@ -28,3 +28,27 @@
     margin-top: 70px;
     border-top: 1px solid #E5E5E5;
 }
+.ui-view-container {
+  position: relative;
+}
+
+[ui-view].ng-enter {
+  opacity: 0;
+}
+
+[ui-view].ng-enter.ng-enter-active {
+  top:0;
+  left:0;
+  opacity: 1;
+}
+[ui-view].ng-leave.ng-leave-active{
+  top:50px;
+  left:50px;
+  opacity:1;
+}
+
+[ui-view].ng-leave{
+  top:0;
+  left:0;
+  opacity:0;
+}
