@@ -120,13 +120,18 @@ angular.module('ticTacToeApp')
         renderer.setPlayerTurn(cell.ix, cell.iy, player);
 
         // Playing Front
-        gameService.playTurn($scope.game,cell.index,player);
+        gameService.playTurn($scope.game, cell.index, player);
 
         // Playing/Validating Back
         var oldGame = $scope.game;
-        Game.playTurn({ position: cell.index },$scope.game,function(data) {}, function (err) {
-                   $scope.game = oldGame;
-        });
+        Game.playTurn(
+          {position: cell.index},
+          $scope.game,
+          function (/*data*/) {
+          },
+          function (/*err*/) {
+            $scope.game = oldGame;
+          });
 
         updateMessage();
       }
@@ -136,7 +141,7 @@ angular.module('ticTacToeApp')
         if ($scope.game === undefined) {
           // TODO : Recup jeux en cours (cas du refresh de page)
           console.error('Instance game non injecté, hack temporaire...');
-          Game.get({id: window.location.pathname.split("/")[2]})
+          Game.get({id: window.location.pathname.split('/')[2]})
             .$promise
             .then(function (g) {
               $scope.game = g;
@@ -157,6 +162,7 @@ angular.module('ticTacToeApp')
         updateGameState();
 
       }
+
       this.init = init;
 
       $offGameRemoteUpdate = $rootScope.$on('game:remoteUpdate', function (e, g) {
