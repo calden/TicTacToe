@@ -1,5 +1,10 @@
 $size_tile: 100px;
 
+.tiles-container {
+  position: relative;
+  height: 100%;
+  display: inline-block;
+}
 .tile {
   width: $size_tile;
   height: $size_tile;
@@ -24,15 +29,16 @@ $size_tile: 100px;
  opacity: 0.2;
 }
 .tileMessage {
-  position:absolute;
-  z-index:9999;
-  top:50%;
+  position: absolute;
+  z-index: 9999;
   color: white;
-  left:0;
-  width:300px;
-  height:30%;
-  background-color:#000000;
+  background-color: #000000;
   opacity: 1;
+  height: 50px;
+  width: 100%;
+  vertical-align: middle;
+  line-height: 50px;
+  margin-top: 80px;
 }
 
 .bounce {
@@ -47,6 +53,8 @@ $size_tile: 100px;
 	/* transition quand la souris survole */
 	transition: all 1s;
 }
+
+
 
 .tictactoeContainer {
   width: 600px;

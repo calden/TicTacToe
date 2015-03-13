@@ -44,7 +44,7 @@ angular.module('ticTacToeApp')
           } else if ($scope.game.stateGame === 'Opened') {
             return 'En attente de joueurs';
           } else if (numberUserInGame() !== $scope.game.turnPlayer) {
-            return 'Attente de votre adversaire !';
+            return 'Attente du coup de votre adversaire !';
           }
         //}
 

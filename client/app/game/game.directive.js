@@ -22,7 +22,7 @@ angular.module('ticTacToeApp')
           };
 
           $scope.isMessageDisplay = function (/*game*/) {
-            return $scope.isBlocked() && $scope.numberUserInGame() !== 0;
+            return $scope.message() !== ''; //$scope.isBlocked() && $scope.numberUserInGame() !== 0;
           };
 
           $scope.resetEventTilePlayed = $rootScope.$on('tilePlayed', function(event, position) {
@@ -34,7 +34,7 @@ angular.module('ticTacToeApp')
           };
 
           $scope.message = function () {
-            if ($scope.isMessageDisplay()) {
+            //if ($scope.isMessageDisplay()) {
               if ($scope.game.stateGame === 'Over') {
                 if ($scope.numberUserInGame() === $scope.game.numberWinner) {
                   return 'La partie est terminée. Vous avez gagné!';
@@ -44,11 +44,12 @@ angular.module('ticTacToeApp')
                   }
                   return 'La partie est terminée. Match nul!';
                 }
-              }
-              if ($scope.numberUserInGame() !== $scope.game.turnPlayer) {
+              } else if ($scope.game.stateGame === 'Opened') {
+                return 'En attente de joueurs';
+              } else if ($scope.numberUserInGame() !== $scope.game.turnPlayer) {
                 return 'Votre adversaire doit jouer!';
               }
-            }
+            //}
             return '';
           };
 
