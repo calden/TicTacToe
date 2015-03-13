@@ -3,10 +3,10 @@
 angular.module('ticTacToeApp')
   .controller(
   'controllerTictactoeCanvas',
-  ['$scope', '$rootScope', 'signEmpty', 'signPlayer1', 'signPlayer2', 'Auth', 'gameService', 'ticTacToeRenderer',
-    function ($scope, $rootScope, signEmpty, signPlayer1, signPlayer2, Auth, gameService, TicTacToeRenderer) {
+  ['$scope', '$rootScope', 'signPlayer1', 'signPlayer2', 'Auth', 'gameService', 'ticTacToeRenderer', 'Game',
+    function ($scope, $rootScope, signPlayer1, signPlayer2, Auth, gameService, TicTacToeRenderer, Game) {
 
-      var renderer, messageTarget = 'center', currentMessageTarget = 'center';
+      var renderer, messageTarget = 'center', currentMessageTarget = 'center', gameId, $offGameRemoteUpdate;
 
       if (angular.isDefined(Auth.getCurrentUser().name)) {
         $scope.localPlayer = Auth.getCurrentUser();
@@ -21,10 +21,6 @@ angular.module('ticTacToeApp')
       function isBlocked() {
         return gameService.isBlocked($scope.game, numberUserInGame());
       }
-
-      /*function isMessageDisplay() {
-       return isBlocked() && numberUserInGame() !== 0;
-       }*/
 
       function getMessage() {
         //if (isMessageDisplay()) {
@@ -62,7 +58,7 @@ angular.module('ticTacToeApp')
 
       function syncBoard() {
 
-        console.log('Game updated', $scope.game.stateGame/*, $scope.game*/);
+        //console.log('Game updated', $scope.game.stateGame/*, $scope.game*/);
 
         var gameState = $scope.game.stateBoard;
 
@@ -71,10 +67,10 @@ angular.module('ticTacToeApp')
 
             var remoteSate;
             switch (gameState.charAt(cell.index)) {
-            case 'X':
+            case signPlayer1:
               remoteSate = 1;
               break;
-            case 'O':
+            case signPlayer2:
               remoteSate = 2;
               break;
             }
@@ -134,13 +130,15 @@ angular.module('ticTacToeApp')
         if ($scope.game === undefined) {
           // TODO : Recup jeux en cours (cas du refresh de page)
           console.error('Instance game non injecté, hack temporaire...');
-          $.get("/api/games/" + window.location.pathname.split("/")[2]).done(function (g) {
-            if (g !== undefined) {
+          Game.get({id: window.location.pathname.split("/")[2]})
+            .$promise
+            .then(function (g) {
               $scope.game = g;
               init(options);
-            }
-          });
+            });
           return;
+        } else {
+          gameId = $scope.game._id;
         }
 
         renderer = new TicTacToeRenderer(options);
@@ -149,28 +147,25 @@ angular.module('ticTacToeApp')
 
         renderer.onCellRequest(playerTurnRequestHandler);
 
-        // On remote update received
-        $scope.game.onChange(syncBoard);
-
         // Message and game locked state update
         updateGameState();
 
       }
-
       this.init = init;
 
+      $offGameRemoteUpdate = $rootScope.$on('game:remoteUpdate', function (e, g) {
+        if (g._id === gameId) {
+          if ($scope.game !== g) { // get the global instance if not
+            $scope.game = g;
+          }
+          syncBoard();
+        }
+      });
 
       $scope.$on('$destroy', function destroy() {
-
-        if ($scope.game === undefined) {
-          return;
-        }
-
-        $scope.game.offChange(syncBoard);
-
+        $offGameRemoteUpdate();
         renderer.destroy();
         renderer = undefined;
-
       });
 
     }])

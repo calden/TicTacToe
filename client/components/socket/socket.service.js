@@ -2,7 +2,8 @@
 'use strict';
 
 angular.module('ticTacToeApp')
-  .factory('socket', ['socketFactory', 'Game', function (socketFactory, Game) {
+  .factory('socket', ['socketFactory', 'Game', '$rootScope',
+    function (socketFactory, Game, $rootScope) {
 
     // socket.io now auto-configures its connection when we ommit a connection url
     var ioSocket = io('', {
@@ -29,7 +30,7 @@ angular.module('ticTacToeApp')
           gameToUpdate.player2 = game.player2;
           gameToUpdate.numberWinner = game.numberWinner;
           // Notify game update
-          gameToUpdate.triggerChange();
+          $rootScope.$broadcast('game:remoteUpdate', gameToUpdate);
         });
         socket.on('game:remove', function (game) {
           _.remove(games, {_id: game._id});
