@@ -23,29 +23,29 @@ angular.module('ticTacToeApp')
       }
 
       /*function isMessageDisplay() {
-        return isBlocked() && numberUserInGame() !== 0;
-      }*/
+       return isBlocked() && numberUserInGame() !== 0;
+       }*/
 
       function getMessage() {
         //if (isMessageDisplay()) {
-          if ($scope.game.stateGame === 'Over') {
-            if (numberUserInGame() === $scope.game.numberWinner) {
-              messageTarget = 'victory';
-              return 'Vous avez gagné !';
+        if ($scope.game.stateGame === 'Over') {
+          if (numberUserInGame() === $scope.game.numberWinner) {
+            messageTarget = 'victory';
+            return 'Vous avez gagné !';
+          } else {
+            if ($scope.game.numberWinner !== 0) {
+              messageTarget = 'loose';
+              return 'Vous avez perdu !';
             } else {
-              if ($scope.game.numberWinner !== 0) {
-                messageTarget = 'loose';
-                return 'Vous avez perdu !';
-              } else {
-                messageTarget = 'victory';
-                return 'Match nul !';
-              }
+              messageTarget = 'victory';
+              return 'Match nul !';
             }
-          } else if ($scope.game.stateGame === 'Opened') {
-            return 'En attente de joueurs';
-          } else if (numberUserInGame() !== $scope.game.turnPlayer) {
-            return 'Attente du coup de votre adversaire !';
           }
+        } else if ($scope.game.stateGame === 'Opened') {
+          return 'En attente de joueurs';
+        } else if (numberUserInGame() !== $scope.game.turnPlayer) {
+          return 'Attente du coup de votre adversaire !';
+        }
         //}
 
         return undefined;
@@ -129,11 +129,17 @@ angular.module('ticTacToeApp')
         updateMessage();
       }
 
-      this.init = function (options) {
+      function init(options) {
 
         if ($scope.game === undefined) {
           // TODO : Recup jeux en cours (cas du refresh de page)
-          console.error('Instance game non injecté');
+          console.error('Instance game non injecté, hack temporaire...');
+          $.get("/api/games/" + window.location.pathname.split("/")[2]).done(function (g) {
+            if (g !== undefined) {
+              $scope.game = g;
+              init(options);
+            }
+          });
           return;
         }
 
@@ -149,7 +155,9 @@ angular.module('ticTacToeApp')
         // Message and game locked state update
         updateGameState();
 
-      };
+      }
+
+      this.init = init;
 
 
       $scope.$on('$destroy', function destroy() {
