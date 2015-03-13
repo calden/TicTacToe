@@ -2,6 +2,17 @@
 
 var _ = require('lodash');
 var Game = require('./game.model');
+var ruleServiceGame = require('./game.service');
+
+
+/**
+ * Fonction d'appel de la recherche avec un Id avec callback
+ */
+var findByIdWithCallBack = function (id, callback) {
+  Game.findById(id, function (err, game) {
+    callback(err, game);
+  });
+}
 
 
 // Get list of games
@@ -12,13 +23,27 @@ exports.index = function(req, res) {
   });
 };
 
+// Validate and play turn
+exports.validateAndPlayTurn = function(req, res) {
+  var validateAndPlayTurnCallBack = function (err, game) {
+    if(err) { return handleError(res, err); }
+    if(!game) { return res.send(404); }
+    else {
+      ruleServiceGame.validateTurn(req,res,game);
+      ruleServiceGame.playTurn(req,res,game);
+    }
+  };
+  findByIdWithCallBack(req.params.id, validateAndPlayTurnCallBack);
+};
+
 // Get a single game
 exports.show = function(req, res) {
-  Game.findById(req.params.id, function (err, game) {
+  var callbackShow = function (err, game) {
     if(err) { return handleError(res, err); }
     if(!game) { return res.send(404); }
     return res.json(game);
-  });
+  };
+  findByIdWithCallBack(req.params.id,callbackShow);
 };
 
 // Creates a new game in the DB.

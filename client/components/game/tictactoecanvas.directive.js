@@ -119,8 +119,14 @@ angular.module('ticTacToeApp')
         // Display played tile on local board
         renderer.setPlayerTurn(cell.ix, cell.iy, player);
 
-        // Send to server
-        gameService.playTurn($scope.game, cell.index, player);
+        // Playing Front
+        gameService.playTurn($scope.game,cell.index,player);
+
+        // Playing/Validating Back
+        var oldGame = $scope.game;
+        Game.playTurn({ position: cell.index },$scope.game,function(data) {}, function (err) {
+                   $scope.game = oldGame;
+        });
 
         updateMessage();
       }

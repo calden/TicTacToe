@@ -8,8 +8,9 @@ angular.module('ticTacToeApp')
         'signPlayer1',
         'signPlayer2',
         'Auth',
+        'Game',
         'gameService',
-        function ($scope,$rootScope,signEmpty,signPlayer1,signPlayer2,Auth,gameService) {
+        function ($scope,$rootScope,signEmpty,signPlayer1,signPlayer2,Auth,Game,gameService) {
 
           if (angular.isDefined(Auth.getCurrentUser().name)){
             $scope.localPlayer = Auth.getCurrentUser();
@@ -26,7 +27,13 @@ angular.module('ticTacToeApp')
           };
 
           $scope.resetEventTilePlayed = $rootScope.$on('tilePlayed', function(event, position) {
-            gameService.playTurn($scope.game, position,$scope.numberUserInGame());
+            var oldGame = $scope.game;
+            // Playing Front
+            gameService.playTurn($scope.game,position,$scope.numberUserInGame());
+            // Playing/Validating Back
+            Game.playTurn({ position: position },$scope.game,function(data) {}, function (err) {
+               $scope.game = oldGame;
+            });
           });
 
           $scope.isBlocked = function () {

@@ -17,19 +17,21 @@ angular.module('ticTacToeApp')
       },
       {
         update: {
-          method: 'PUT'
-        },
+            method: 'PUT'
+         },
         get: {
-          method: 'GET'
-        },
+            method: 'GET'
+         },
         getAll: {
-          method: 'GET',
-          isArray: true
-        }
-      }
-    );
-
-    game.prototype.canJoin = function () {
+          method:'GET',
+          isArray:true
+         },
+        playTurn: {
+            method: 'POST',
+            url: '/api/games/:id/:position'
+         }
+	  });
+    game.prototype.canJoin = function(){
       return this.stateGame === 'Opened' && this.player1 !== Auth.getCurrentUser().name;
     };
 
@@ -57,24 +59,11 @@ angular.module('ticTacToeApp')
 
     }
 
-    function playTurn(currentGame, position, numberUser) {
-      var pos = parseInt(position);
-      var state = currentGame.stateBoard;
-      var sign = (numberUser === 1) ? signPlayer1 : signPlayer2;
-      currentGame.stateBoard = state.substring(0, pos) + sign + state.substring(pos + 1, 9);
-      if (checkWinnerGame(currentGame, sign)) {
-        currentGame.stateGame = 'Over';
-        currentGame.numberWinner = numberUser;
-      } else {
-        if (checkDraw(currentGame)) {
-          currentGame.stateGame = 'Over';
-          currentGame.numberWinner = 0;
-        }
-        else {
-          currentGame.turnPlayer = (numberUser === 1) ? 2 : 1;
-        }
-      }
-      Game.update(currentGame);
+    function playTurn(currentGame,position,numberUser) {
+         var pos = parseInt(position);
+         var state = currentGame.stateBoard;
+         var sign = (numberUser === 1)? signPlayer1 : signPlayer2;
+         currentGame.stateBoard =state.substring(0,pos)+sign+state.substring(pos+1,9);
     }
 
     function isBlocked(currentGame, numberUser) {
