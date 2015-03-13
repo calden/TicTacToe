@@ -2,6 +2,7 @@
 
 angular.module('ticTacToeApp')
   .factory('Modal', function ($rootScope, $modal) {
+
     /**
      * Opens a modal
      * @param  {Object} scope      - an object to be merged with modal's scope
@@ -9,7 +10,9 @@ angular.module('ticTacToeApp')
      * @return {Object}            - the instance $modal.open() returns
      */
     function openModal(scope, modalClass) {
+
       var modalScope = $rootScope.$new();
+
       scope = scope || {};
       modalClass = modalClass || 'modal-default';
 
@@ -33,7 +36,7 @@ angular.module('ticTacToeApp')
          * @param  {Function} del - callback, ran when delete is confirmed
          * @return {Function}     - the function to open the modal (ex. myModalFn)
          */
-        delete: function(del) {
+        'delete': function (del) {
           del = del || angular.noop;
 
           /**
@@ -41,10 +44,10 @@ angular.module('ticTacToeApp')
            * @param  {String} name   - name or info to show on modal
            * @param  {All}           - any additional args are passed staight to del callback
            */
-          return function() {
+          return function () {
             var args = Array.prototype.slice.call(arguments),
-                name = args.shift(),
-                deleteModal;
+              name = args.shift(),
+              deleteModal;
 
             deleteModal = openModal({
               modal: {
@@ -54,24 +57,26 @@ angular.module('ticTacToeApp')
                 buttons: [{
                   classes: 'btn-danger',
                   text: 'Delete',
-                  click: function(e) {
+                  click: function (e) {
                     deleteModal.close(e);
                   }
                 }, {
                   classes: 'btn-default',
                   text: 'Cancel',
-                  click: function(e) {
+                  click: function (e) {
                     deleteModal.dismiss(e);
                   }
                 }]
               }
             }, 'modal-danger');
 
-            deleteModal.result.then(function(event) {
+            deleteModal.result.then(function (event) {
               del.apply(event, args);
             });
           };
         }
+
       }
+
     };
   });

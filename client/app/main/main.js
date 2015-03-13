@@ -2,6 +2,7 @@
 
 angular.module('ticTacToeApp')
   .config(function ($stateProvider) {
+
     $stateProvider
       .state('main', {
         url: '/',
@@ -9,16 +10,18 @@ angular.module('ticTacToeApp')
         resolve: {
           games: function (Game) {
             return Game.getAll();
-            }
+          }
         },
         controller: 'MainCtrl'
       })
       .state('main.gameboard', {
-        url: "gameboard/:idGame",
+        url: 'gameboard/:idGame',
         resolve: {
-          activeGame: ['games','$stateParams', function(games, $stateParams) {
-             return _.find(games, function(game) { return game._id === $stateParams.idGame;});
-         }]
+          activeGame: ['games', '$stateParams', function (games, $stateParams) {
+            return _.find(games, function (game) {
+              return game._id === $stateParams.idGame;
+            });
+          }]
         },
         templateUrl: 'app/main/gameboard.html',
         controller: function ($scope, activeGame) {
@@ -26,7 +29,8 @@ angular.module('ticTacToeApp')
         }
       })
       .state('main.creategame', {
-        url: "creategame",
+        url: 'creategame',
         templateUrl: 'app/main/creategame.html'
       });
+
   });

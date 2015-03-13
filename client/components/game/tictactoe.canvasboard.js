@@ -1,25 +1,24 @@
 /*global  window */
 
-/* global io */
 'use strict';
 
 angular.module('ticTacToeApp')
-  .factory('ticTacToeRenderer', [function() {
+  .factory('ticTacToeRenderer', [function () {
 
     var defOptions = {
         gameDim: {width: 3, height: 3},
         colors: {
-          bg: "transparent",
-          grid: "rgba(150, 150, 150, 1)",
-          p1: "rgba(150, 0, 0, 1)",
-          p2: "rgba(0, 150, 0, 1)",
-          hoverCell: "rgba(0, 150, 150, 0.3)",
-          message: "rgba(255, 255, 255, 0.5)",
-          messagebg: "rgba(100, 0, 0, 0.5)"
+          bg: 'transparent',
+          grid: 'rgba(150, 150, 150, 1)',
+          p1: 'rgba(150, 0, 0, 1)',
+          p2: 'rgba(0, 150, 0, 1)',
+          hoverCell: 'rgba(0, 150, 150, 0.3)',
+          message: 'rgba(255, 255, 255, 0.5)',
+          messagebg: 'rgba(100, 0, 0, 0.5)'
         },
         draw: {
-          p1: "cross",
-          p2: "circle"
+          p1: 'cross',
+          p2: 'circle'
         }
       },
       win = window,
@@ -28,6 +27,7 @@ angular.module('ticTacToeApp')
 
     // Polyfil for requestAnimationFrame
     reqAnim = (function () {
+
       function polyRequestAnimationFrame(callback, that) {
         if (callback._firstRequestAnimationFrame === undefined) {
           callback._firstRequestAnimationFrame = new Date().getTime();
@@ -37,14 +37,17 @@ angular.module('ticTacToeApp')
             var stamp = (new Date().getTime()) - callback._firstRequestAnimationFrame;
             callback.call(that, stamp);
           },
-          1000/60 //1000/24
+          1000 / 60 //1000/24
         );
       }
-      return win.requestAnimationFrame =
+
+      win.requestAnimationFrame =
         win.requestAnimationFrame ||
         win.webkitRequestAnimationFrame ||
         win.mozRequestAnimationFrame ||
         polyRequestAnimationFrame;
+
+      return win.requestAnimationFrame;
     }());
 
     function TictactoeRenderer(options) {
@@ -78,16 +81,16 @@ angular.module('ticTacToeApp')
         // Get the container
         container = options.container;
         if (!(container instanceof HTMLElement)) {
-          if (typeof container === "string") {
+          if (typeof container === 'string') {
             container = doc.getElementById(container);
-          } else if (typeof container === "object") {
+          } else if (typeof container === 'object') {
             if (container.jquery) {
               container = container.get(0);
             }
           }
         }
         if (!container) {
-          throw "ARGUMENT_EXCEPTION : no container defined";
+          throw 'ARGUMENT_EXCEPTION : no container defined';
         }
 
         // Get the game grid size
@@ -110,16 +113,17 @@ angular.module('ticTacToeApp')
 
         // Default value
         options.colors = options.colors || {};
-        options.colors.bg = options.colors.bg || defOptions.colors.bg;
-        options.colors.grid = options.colors.grid || defOptions.colors.grid;
-        options.colors.p1 = options.colors.p1 || defOptions.colors.p1;
-        options.colors.p2 = options.colors.p2 || defOptions.colors.p2;
-        options.colors.hoverCell = options.colors.hoverCell || defOptions.colors.hoverCell;
+        options.colors.bg = options.colors.bg || defOptions.colors.bg;
+        options.colors.grid = options.colors.grid || defOptions.colors.grid;
+        options.colors.p1 = options.colors.p1 || defOptions.colors.p1;
+        options.colors.p2 = options.colors.p2 || defOptions.colors.p2;
+        options.colors.hoverCell = options.colors.hoverCell || defOptions.colors.hoverCell;
         options.draw = options.draw || {};
         options.draw.p1 = options.draw.p1 || defOptions.draw.p1;
         options.draw.p2 = options.draw.p2 || defOptions.draw.p2;
-        bx = gameSize.width / 100;
-        by = gameSize.height / 100;
+        // Proportianal border size
+        bx = gameSize.width / 70;
+        by = gameSize.height / 70;
         bx2 = bx * 2;
         by2 = by * 2;
         bmi = Math.min(bx, by);
@@ -128,13 +132,13 @@ angular.module('ticTacToeApp')
         bmx2 = bmx * 2;
 
         // Create the game canvas
-        canvas = doc.createElement("canvas");
-        canvas.setAttribute("width", gameSize.width);
-        canvas.setAttribute("height", gameSize.height);
+        canvas = doc.createElement('canvas');
+        canvas.setAttribute('width', gameSize.width);
+        canvas.setAttribute('height', gameSize.height);
         container.appendChild(canvas);
 
         // Get the context
-        ctx = canvas.getContext("2d");
+        ctx = canvas.getContext('2d');
 
         // Empty cells memory grid
         cells = [];
@@ -147,12 +151,12 @@ angular.module('ticTacToeApp')
         drawPlayer2 = getDrawFunc(options.draw.p2, options.colors.p2);
 
         // Mouse events listener
-        //event.on(canvas, "click", clickHandler);
-        //event.on(canvas, "mousemove", mouseMoveHandler);
-        //event.on(canvas, "mouseleave", mouseLeaveHandler);
-        canvas.addEventListener("click", clickHandler);
-        canvas.addEventListener("mousemove", mouseMoveHandler);
-        canvas.addEventListener("mouseleave", mouseLeaveHandler);
+        //event.on(canvas, 'click', clickHandler);
+        //event.on(canvas, 'mousemove', mouseMoveHandler);
+        //event.on(canvas, 'mouseleave', mouseLeaveHandler);
+        canvas.addEventListener('click', clickHandler);
+        canvas.addEventListener('mousemove', mouseMoveHandler);
+        canvas.addEventListener('mouseleave', mouseLeaveHandler);
 
         // First render
         that.redraw();
@@ -163,22 +167,26 @@ angular.module('ticTacToeApp')
         if (locked) {
           return;
         }
-        var cell = getCellByCoord(e.offsetX,e.offsetY);
+        var cell = getCellByCoord(e.offsetX, e.offsetY);
         if (cell !== undefined) {
-          fnCellRequest.forEach(function (fn) { fn.call(this, cell); });
+          fnCellRequest.forEach(function (fn) {
+            fn.call(this, cell);
+          });
         }
       }
+
       function mouseMoveHandler(e) {
         if (locked) {
           return;
         }
-        var newCell = getCellByCoord(e.offsetX,e.offsetY);
-        if (hoverCell === undefined || hoverCell.ix != newCell.ix || hoverCell.iy != newCell.iy) {
+        var newCell = getCellByCoord(e.offsetX, e.offsetY);
+        if (hoverCell === undefined || hoverCell.ix !== newCell.ix || hoverCell.iy !== newCell.iy) {
           hoverCell = newCell;
           that.redraw();
         }
       }
-      function mouseLeaveHandler(e) {
+
+      function mouseLeaveHandler() {
         hoverCell = undefined;
         that.redraw();
       }
@@ -192,6 +200,7 @@ angular.module('ticTacToeApp')
         y = Math.ceil(py / cellSize.height) - 1;
         return getCell(x, y);
       }
+
       function getCell(x, y) {
         var nex, ney, cell;
         // N-E point of the cell
@@ -214,14 +223,14 @@ angular.module('ticTacToeApp')
 
       function getDrawFunc(draw, color) {
         var fn;
-        switch(draw) {
-        case "cross":
+        switch (draw) {
+        case 'cross':
           fn = drawCross;
           break;
-        case "circle":
+        case 'circle':
           fn = drawCircle;
           break;
-        case "disk":
+        case 'disk':
           fn = drawDisk;
           break;
         default:
@@ -231,6 +240,7 @@ angular.module('ticTacToeApp')
           fn(x, y, color);
         };
       }
+
       function drawCross(x, y, c) {
         var cell;
         cell = getCell(x, y);
@@ -243,6 +253,7 @@ angular.module('ticTacToeApp')
         ctx.lineTo(cell.x + bx, cell.y + cellSize.height - by2);
         ctx.stroke();
       }
+
       function drawCircle(x, y, c) {
         var cell;
         cell = getCell(x, y);
@@ -251,6 +262,7 @@ angular.module('ticTacToeApp')
         ctx.arc(cell.cx, cell.cy, Math.min(cellSize.width, cellSize.height) / 2 - bmx, 0, 2 * Math.PI);
         ctx.stroke();
       }
+
       function drawDisk(x, y, c) {
         var cell;
         cell = getCell(x, y);
@@ -260,23 +272,24 @@ angular.module('ticTacToeApp')
         ctx.closePath();
         ctx.fill();
       }
+
       function drawMessage(msgDef /*, msgIndex */) {
         var text = messages[msgDef.id] || msgDef.text, tx = bx, ty = by + 50, txtSize, fontSize;
         if (msgDef.position || undefined) {
-          switch(msgDef.position) {
-          case "center":
+          switch (msgDef.position) {
+          case 'center':
             tx = gameSize.width / 2;
             ty = gameSize.height / 2;
             break;
           default:
-            tx = msgDef.positionX || (msgDef.positionX = parseInt(msgDef.position.split(",")[0]));
-            ty = msgDef.positionY || (msgDef.positionY = parseInt(msgDef.position.split(",")[1]));
+            tx = msgDef.positionX || (msgDef.positionX = parseInt(msgDef.position.split(',')[0]));
+            ty = msgDef.positionY || (msgDef.positionY = parseInt(msgDef.position.split(',')[1]));
           }
         }
         if (text !== undefined) {
-          ctx.textAlign="center";
+          ctx.textAlign = 'center';
           fontSize = (msgDef.fontSize || 24);
-          ctx.font = fontSize + "px " + msgDef.font;
+          ctx.font = fontSize + 'px ' + msgDef.font;
           txtSize = ctx.measureText(text);
           ctx.fillStyle = msgDef.bgcolor || defOptions.colors.messagebg;
           ctx.fillRect(tx - txtSize.width / 2 - 10, ty - fontSize, txtSize.width + 20, fontSize + 10);
@@ -315,8 +328,8 @@ angular.module('ticTacToeApp')
 
         // Draw player marks
         ctx.lineWidth = Math.max(bmi, 5);
-        for(y = 0; y < gameDim.height; y += 1) {
-          for(x = 0; x < gameDim.width; x += 1) {
+        for (y = 0; y < gameDim.height; y += 1) {
+          for (x = 0; x < gameDim.width; x += 1) {
             j = cells[x][y];
             if (j === 1) {
               drawPlayer1(x, y);
@@ -330,7 +343,7 @@ angular.module('ticTacToeApp')
         // Hover cell
         if ((!locked) && hoverCell !== undefined) {
           ctx.fillStyle = options.colors.hoverCell; //options.colors.bg;
-          ctx.fillRect(hoverCell.x-3, hoverCell.y-3, hoverCell.w+6, hoverCell.h+6);
+          ctx.fillRect(hoverCell.x - 3, hoverCell.y - 3, hoverCell.w + 6, hoverCell.h + 6);
         }
 
         // Messages
@@ -363,7 +376,7 @@ angular.module('ticTacToeApp')
           that.redraw(); // Uniquement si animation
           // Draw scaled mark
           ctx.save();
-          ctx.translate(0, cell.cy * (1-animRatio));
+          ctx.translate(0, cell.cy * (1 - animRatio));
           ctx.scale(1, animRatio);
           if (j === 1) {
             drawPlayer1(x, y);
@@ -379,10 +392,11 @@ angular.module('ticTacToeApp')
             //console.log(animRatio);
           } else {
             // Draw final board
-            //console.log("Anim finished");
+            //console.log('Anim finished');
             that.setCell(x, y, j);
           }
         }
+
         animationLoop();
       };
 
@@ -391,7 +405,7 @@ angular.module('ticTacToeApp')
         that.redraw();
       };
 
-      Object.defineProperty(that, "locked", {
+      Object.defineProperty(that, 'locked', {
         set: function (nlocked) {
           locked = nlocked;
           that.redraw();
@@ -412,9 +426,9 @@ angular.module('ticTacToeApp')
       };
 
       that.destroy = function () {
-        canvas.removeEventListener("click", clickHandler);
-        canvas.removeEventListener("mousemove", mouseMoveHandler);
-        canvas.removeEventListener("mouseleave", mouseLeaveHandler);
+        canvas.removeEventListener('click', clickHandler);
+        canvas.removeEventListener('mousemove', mouseMoveHandler);
+        canvas.removeEventListener('mouseleave', mouseLeaveHandler);
         container.removeChild(canvas);
       };
 

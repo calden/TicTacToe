@@ -5,26 +5,27 @@
     </div>
   </div>
   <div class="panel-body">
-    <div>
-        <div ng-class="{ tileHide: isBlocked()}">
-        </div>
-        <div class="text-center" ng-class="{ tileMessage: isMessageDisplay() }">
-          {{message()}}
-        </div>
-        <div class="row-fluid" >
-        <tile statetile="game.stateBoard.charAt(0)" position="0" />
-        <tile statetile="game.stateBoard.charAt(1)" position="1" />
-        <tile statetile="game.stateBoard.charAt(2)" position="2" />
+    <div class="tiles-container">
+      <div ng-class="{ tileHide: isBlocked()}">
+      </div>
+      <!-- Overlay message -->
+      <div class="text-center" ng-class="{ tileMessage: isMessageDisplay() }">
+        {{message()}}
       </div>
       <div class="row-fluid">
-        <tile statetile="game.stateBoard.charAt(3)" position="3" />
-        <tile statetile="game.stateBoard.charAt(4)" position="4" />
-        <tile statetile="game.stateBoard.charAt(5)" position="5" />
+        <tile statetile="game.stateBoard.charAt(0)" position="0"/>
+        <tile statetile="game.stateBoard.charAt(1)" position="1"/>
+        <tile statetile="game.stateBoard.charAt(2)" position="2"/>
       </div>
       <div class="row-fluid">
-        <tile statetile="game.stateBoard.charAt(6)" position="6" />
-        <tile statetile="game.stateBoard.charAt(7)" position="7" />
-        <tile statetile="game.stateBoard.charAt(8)" position="8" />
+        <tile statetile="game.stateBoard.charAt(3)" position="3"/>
+        <tile statetile="game.stateBoard.charAt(4)" position="4"/>
+        <tile statetile="game.stateBoard.charAt(5)" position="5"/>
+      </div>
+      <div class="row-fluid">
+        <tile statetile="game.stateBoard.charAt(6)" position="6"/>
+        <tile statetile="game.stateBoard.charAt(7)" position="7"/>
+        <tile statetile="game.stateBoard.charAt(8)" position="8"/>
       </div>
     </div>
   </div>
