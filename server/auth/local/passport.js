@@ -22,4 +22,5 @@ exports.setup = function (User, config) {
       });
     }
   ));
+
 };
