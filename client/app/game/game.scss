@@ -85,6 +85,21 @@ $size_tile: 100px;
 
     position: relative;
 
+    #activePlayer {
+      border-bottom: 5px solid #428bca;
+      padding-bottom: 10px;
+    }
+    &.turn-j1 {
+      span.player1 {
+        @extend #activePlayer ;
+      }
+    }
+    &.turn-j2 {
+      span.player2 {
+        @extend #activePlayer ;
+      }
+    }
+
     button.btn-close-gameboard {
       position: absolute;
       top : 10px;

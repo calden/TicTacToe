@@ -12,8 +12,6 @@ angular.module('ticTacToeApp')
     'gameService',
     function ($scope, $rootScope, signEmpty, signPlayer1, signPlayer2, Auth, Game, gameService) {
 
-      return;
-
       if (angular.isDefined(Auth.getCurrentUser().name)) {
         $scope.localPlayer = Auth.getCurrentUser();
       } else {

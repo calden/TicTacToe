@@ -1,8 +1,18 @@
 <!--<game-board game="activeGame"></game-board>-->
 
 <div class="tictactoe-panel" ng-show="currentGameId">
-  <div class="tictactoe-title">
-    <h3><span class="symbol-j1"></span> {{activeGame.player1}}<span class="sep">|</span>{{activeGame.player2}} <span class="symbol-j2"></span></h3>
+  <div class="tictactoe-title turn-j{{activeGame.turnPlayer}}">
+    <h3>
+      <span class="player1">
+        <span class="symbol-j1"></span>
+        {{activeGame.player1}}
+      </span>
+      <span class="sep">|</span>
+      <span class="player2">
+        {{activeGame.player2}}
+        <span class="symbol-j2"></span>
+      </span>
+    </h3>
     <button ng-click="close()" class="btn btn-primary btn-close-gameboard" type="button">Fermer</button>
   </div>
   <div class="tictactoe-body">
