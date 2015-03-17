@@ -27,7 +27,9 @@
     font-size: 16px;
     // Effets lors du survole et sélection
     &:hover {
-      border-width: 3px
+      //border-bottom-width: 3px;
+      //border-left-width: 3px;
+      background-color: lightgray;
     }
     &.active {
       position: relative;
