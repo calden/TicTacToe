@@ -12,15 +12,13 @@ angular.module('ticTacToeApp')
 
       $scope.gameCreated = false;
 
-      $scope.firstPlayer = true;
-
       $scope.newGame = {
+        turnPlayer: 1,
         player1: Auth.getCurrentUser().name,
         player2: ''
       };
 
       $scope.validateNewGame = function () {
-        $scope.newGame.turnPlayer = $scope.firstPlayer ? 1 : 2;
         $scope.newGame = Game.save($scope.newGame);
         $scope.gameCreated = true;
       };

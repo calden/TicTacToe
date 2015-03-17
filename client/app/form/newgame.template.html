@@ -9,7 +9,8 @@
   <div class="panel-body">
     <div ng-if="userConnected && !gameCreated">
       <div class="form-group">
-        <input class="pull-left" style="margin: 5px 10px 5px 5px;" type="checkbox" ng-model="firstPlayer" />
+        <input class="pull-left" style="margin: 5px 10px 5px 5px;" type="checkbox"
+               ng-model="newGame.turnPlayer" ng-true-value="1" ng-false-value="2"/>
         <label class="form-label">Vous commencez.</label>
       </div>
       <div>
