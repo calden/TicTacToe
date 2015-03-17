@@ -13,6 +13,46 @@
     letter-spacing: -1px;
 }
 
+#listCheckbox {
+  position: absolute;
+  top: 8px;
+  right: 7px;
+  font-size: 24px;
+}
+.list-games {
+  .list-group-item {
+    cursor: pointer;
+    padding-right: 40px;
+    min-height: 50px;
+    font-size: 16px;
+    // Effets lors du survole et sélection
+    &:hover {
+      border-width: 3px
+    }
+    &.active {
+      position: relative;
+      left: 5px;
+    }
+    // Check box de bout de ligne
+    >.unselected-glyph {
+      @extend #listCheckbox;
+      display: block;
+    }
+    >.selected-glyph {
+      @extend #listCheckbox;
+      display: none;
+    }
+    // Etat sélectionné
+    &.active {
+      >.selected-glyph {
+        display: block;
+      }
+      >.unselected-glyph {
+        display: none;
+      }
+    }
+  }
+}
 .hero-unit {
     position: relative;
     padding: 30px 15px;

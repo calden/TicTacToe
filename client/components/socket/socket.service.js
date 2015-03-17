@@ -34,6 +34,9 @@ angular.module('ticTacToeApp')
         });
         socket.on('game:remove', function (game) {
           _.remove(games, {_id: game._id});
+          if ($rootScope.currentGameId === game._id) {
+            $rootScope.currentGameId = undefined;
+          }
         });
         socket.on('game:create', function (game) {
           games.push(new Game(game));

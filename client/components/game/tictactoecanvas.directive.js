@@ -38,7 +38,7 @@ angular.module('ticTacToeApp')
             }
           }
         } else if ($scope.game.stateGame === 'Opened') {
-          return 'En attente de joueurs';
+          return 'En attente d\'un adversaire';
         } else if (numberUserInGame() !== $scope.game.turnPlayer) {
           return 'Attente du coup de votre adversaire !';
         }
@@ -150,6 +150,7 @@ angular.module('ticTacToeApp')
           return;
         } else {
           gameId = $scope.game._id;
+          $rootScope.currentGameId = gameId;
         }
 
         renderer = new TicTacToeRenderer(options);
@@ -176,8 +177,11 @@ angular.module('ticTacToeApp')
 
       $scope.$on('$destroy', function destroy() {
         $offGameRemoteUpdate();
-        renderer.destroy();
-        renderer = undefined;
+        if (renderer !== undefined) {
+          renderer.destroy();
+          renderer = undefined;
+        }
+        $rootScope.currentGameId = undefined;
       });
 
     }])
@@ -200,9 +204,10 @@ angular.module('ticTacToeApp')
           height: attrs.gameHeight || 3,
           colors: {
             bg: '#F8F8F8',                        // Background color
-            grid: 'blue',                         // Grid line color
+            grid: 'rgba(0,0,150,0.7)',            // Grid line color
             p1: 'rgba(0,255,0,1)',                // Player 1 color
-            p2: 'rgba(200,0,0,1)'                 // PLayer 2 Color
+            p2: 'rgba(200,0,0,1)',                // PLayer 2 Color
+            hoverCell: 'rgba(50, 50, 50, 0.3)'
           },
           draw: {p1: 'cross', p2: 'circle'},      // Players drawing forms
           messages: [                             // Canvas message board definition

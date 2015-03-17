@@ -1,2 +1,11 @@
 <!--<game-board game="activeGame"></game-board>-->
-<tictactoe-canvas game="activeGame"/>
+
+<div class="tictactoe-panel" ng-show="currentGameId">
+  <div class="tictactoe-title">
+    <h3><span class="symbol-j1"></span> {{activeGame.player1}}<span class="sep">|</span>{{activeGame.player2}} <span class="symbol-j2"></span></h3>
+    <button ng-click="close()" class="btn btn-primary btn-close-gameboard" type="button">Fermer</button>
+  </div>
+  <div class="tictactoe-body">
+    <tictactoe-canvas game="activeGame"/>
+  </div>
+</div>
