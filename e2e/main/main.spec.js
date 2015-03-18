@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Main View', function() {
+xdescribe('Main View', function() {
   var page;
 
   beforeEach(function() {
