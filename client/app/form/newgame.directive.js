@@ -3,25 +3,28 @@
 angular.module('ticTacToeApp')
   .controller('controllerNewGame', [
     '$scope',
+    '$state',
     'Auth',
     'Game',
-    function ($scope, Auth, Game) {
+    function ($scope, $state, Auth, Game) {
 
       $scope.userConnected = angular.isDefined(Auth.getCurrentUser().name);
 
       $scope.gameCreated = false;
 
-      $scope.firstPlayer = true;
-
       $scope.newGame = {
+        turnPlayer: 1,
         player1: Auth.getCurrentUser().name,
         player2: ''
       };
 
       $scope.validateNewGame = function () {
-        $scope.newGame.turnPlayer = $scope.firstPlayer ? 1 : 2;
-        Game.save($scope.newGame);
+        $scope.newGame = Game.save($scope.newGame);
         $scope.gameCreated = true;
+      };
+
+      $scope.display = function () {
+        $state.go('main.gameboard', {idGame: $scope.newGame._id});
       };
 
     }])

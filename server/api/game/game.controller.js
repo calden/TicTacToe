@@ -12,8 +12,7 @@ var findByIdWithCallBack = function (id, callback) {
   Game.findById(id, function (err, game) {
     callback(err, game);
   });
-}
-
+};
 
 // Get list of games
 exports.index = function(req, res) {

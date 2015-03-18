@@ -24,8 +24,14 @@ angular.module('ticTacToeApp')
           }]
         },
         templateUrl: 'app/main/gameboard.html',
-        controller: function ($scope, activeGame) {
+        controller: function ($scope, activeGame, $rootScope, $state) {
+          if (activeGame === undefined) {
+            $rootScope.currentGameId = undefined;
+            $state.go('main');
+            return;
+          }
           $scope.activeGame = activeGame;
+          $rootScope.currentGameId = activeGame._id;
         }
       })
       .state('main.creategame', {
