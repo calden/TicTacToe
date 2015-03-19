@@ -23,7 +23,6 @@ exports.validateTurn = function(req,res,game) {
  * Fonction permettant de jouer le coup , verifier si ya un gagnant et de sauver l'etat du jeu
  */
 exports.playTurn = function(req,res,game) {
-  console.log( req.user );
   var numberPlayer = identifyPlayer(game,req.user.name);
   var state = game.stateBoard;
   var pos = parseInt(req.params.position);

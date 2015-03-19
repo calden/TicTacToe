@@ -12,6 +12,8 @@ angular.module('ticTacToeApp')
 
       $scope.gameCreated = false;
 
+      $scope.model = { firstPlayer: true };
+
       $scope.newGame = {
         turnPlayer: 1,
         player1: Auth.getCurrentUser().name,
@@ -19,6 +21,8 @@ angular.module('ticTacToeApp')
       };
 
       $scope.validateNewGame = function () {
+
+        //$scope.newGame.turnPlayer = $scope.model.firstPlayer ? 1 : 2;
         $scope.newGame = Game.save($scope.newGame);
         $scope.gameCreated = true;
       };
@@ -31,6 +35,7 @@ angular.module('ticTacToeApp')
   .directive('newGame', [function () {
     return {
       restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
+      scope: {},
       controller: 'controllerNewGame',
       templateUrl: 'app/form/newgame.template.html',
       replace: true,
