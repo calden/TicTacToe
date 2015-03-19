@@ -2,30 +2,23 @@
 
 describe('Game View', function() {
   var partieList;
-  var newGame;
 
   beforeEach(function() {
     browser.get('http://localhost:9000')
   });
 
-  it('should be able to create a new Game', function() {
-
-      element(by.linkText('login')).then(console.log);//.click();
-console.log(element(by.linkText('login')));
-      element(by.model('user.email')).sendKeys('test@test.com');;
-
-      element(by.model('user.password')).sendKeys('test');;
-      browser.pause();
-      element(by.buttonText('Login')).click();
-
-
-      element.all(by.repeater("game in games")).then(console.log);
-      var partieCount = element.all(by.repeater("game in games")).rows.length;
-
+  it('should be able to create a new Game final', function() {
+    var countBefore, countAfter;
+    element(by.linkText('Login')).click();
+    element(by.model('user.email')).sendKeys('test@test.com');
+    element(by.model('user.password')).sendKeys('test');
+    element(by.buttonText('Login')).click();
+    element.all(by.repeater("game in games")).count().then(function(data){
+      countBefore = data;
       element(by.buttonText('Créer partie')).click();
-      element(by.buttonText("valider")).click();
-
-      expect(element(by.id("confirmationMessage"))).toBePresent();
-      expect(element.all(by.repeater("game in games")).rows.length).toBe(partieCount + 1);
+      element(by.buttonText("Valider")).click();
+      countAfter = element.all(by.repeater("game in games")).count();
+      expect (countAfter).toBe(countBefore + 1);
+    });
   });
 });
