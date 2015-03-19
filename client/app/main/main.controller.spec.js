@@ -8,35 +8,54 @@ describe('Controller: MainCtrl', function () {
 
   var MainCtrl,
     scope,
-    $httpBackend;
+    injectedGames;
 
   // Initialize the controller and a mock scope
-  beforeEach(inject(function (_$httpBackend_, $controller, $rootScope) {
-
-    $httpBackend = _$httpBackend_;
-
-    $httpBackend.expectGET('/api/games')
-      .respond([{
-        name: 'Partie 1',
-        info: 'X contre Y',
-        active: true
-      }, {
-        name: 'Parie 2',
-        info: 'X contre Z',
-        active: false
-      }]);
+  beforeEach(inject(function ($controller, $rootScope) {
 
     scope = $rootScope.$new();
+    injectedGames = "foo";
 
     MainCtrl = $controller('MainCtrl', {
-      $scope: scope
+      $scope: scope,
+      games : injectedGames
     });
+
 
   }));
 
-  it('should attach a list of things to the scope', function () {
-    $httpBackend.flush();
-    expect(scope.games.length).toBe(2);
+  it('should attach the injected list of games to the scope', function () {
+    expect(scope.games).toBe(injectedGames);
   });
-
 });
+
+
+describe ('Service : games', function(){
+  // load the controller's module
+  beforeEach(module('ticTacToeApp'));
+  beforeEach(module('socketMock'));
+
+  var $httpBackend;
+  var allGames = [{
+    name: 'Partie 1',
+    info: 'X contre Y',
+    active: true
+  }, {
+    name: 'Partie 2',
+    info: 'X contre Z',
+    active: false
+  }];
+
+  beforeEach(inject(function(_$httpBackend_){
+    $httpBackend = _$httpBackend_;
+
+    $httpBackend.expectGET('/api/games')
+      .respond(allGames);
+  }));
+
+  it('should query the right api', inject(function(Game){
+      var result = Game.getAll();
+      $httpBackend.flush();
+      expect(result.length).toEqual(allGames.length);
+  }));
+})

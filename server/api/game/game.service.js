@@ -36,7 +36,7 @@ exports.playTurn = function(req,res,game) {
      game.stateGame = stateOver;
      game.numberWinner = 0;
    } else {
-     game.numberPlayer = numberPlayer===1 ? 2 : 1;
+     game.turnPlayer = numberPlayer===1 ? 2 : 1;
    }
   }
   game.save(function (err) {
