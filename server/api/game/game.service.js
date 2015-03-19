@@ -74,3 +74,7 @@ function identifyPlayer(currentGame,name) {
    }
    return numberUser;
 }
+
+function handleError(res, err) {
+  return res.send(500, err);
+}
