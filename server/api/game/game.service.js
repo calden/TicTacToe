@@ -14,7 +14,7 @@ var stateOver = "Over";
  */
 exports.validateTurn = function(req,res,game) {
   var charAtPosition =  game.stateBoard.charAt(req.params.position);
-   if ( charAtPosition === '' && charAtPosition!=='_' ) {
+   if ( charAtPosition === '' || charAtPosition!=='_' ) {
      return res.send(500,"Impossible de jouer sur cette case.");
    }
 };
