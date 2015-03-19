@@ -42,6 +42,11 @@ exports.playTurn = function(req,res,game) {
   game.save(function (err) {
     if (err) { return handleError(res, err); }
     Game.emit('game:save', game);
+    if(game.numberWinner){
+      var top10;
+//      top10 = aggregat Mongo
+      Game.emit('game:endGame', top10);
+    }
     return res.json(200, game);
   });
 
