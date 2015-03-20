@@ -10,29 +10,17 @@ angular.module('ticTacToeApp')
         resolve: {
           games: function (Game) {
             return Game.getAll();
+          },
+          scores: function (Game) {
+            return Game.getScores();
           }
         },
         controller: 'MainCtrl'
       })
       .state('main.gameboard', {
         url: 'gameboard/:idGame',
-        resolve: {
-          activeGame: ['games', '$stateParams', function (games, $stateParams) {
-            return _.find(games, function (game) {
-              return game._id === $stateParams.idGame;
-            });
-          }]
-        },
-        templateUrl: 'app/main/gameboard.html',
-        controller: function ($scope, activeGame, $rootScope, $state) {
-          if (activeGame === undefined) {
-            $rootScope.currentGameId = undefined;
-            $state.go('main');
-            return;
-          }
-          $scope.activeGame = activeGame;
-          $rootScope.currentGameId = activeGame._id;
-        }
+        templateUrl: 'app/game/gameboard.html',
+        controller: 'GameboardCtrl'
       })
       .state('main.creategame', {
         url: 'creategame',

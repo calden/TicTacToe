@@ -4,7 +4,7 @@ angular.module('ticTacToeApp')
   .controller('NavbarCtrl', function ($scope, $location, Auth) {
 
     $scope.menu = [{
-      'title': 'Home',
+      'title': 'Accueil',
       'link': '/'
     }];
 

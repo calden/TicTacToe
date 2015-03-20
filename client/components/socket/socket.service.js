@@ -41,13 +41,20 @@ angular.module('ticTacToeApp')
         socket.on('game:create', function (game) {
           games.push(new Game(game));
         });
+      },
 
+      manageScores: function (scores) {
+        socket.on('game:scores', function (newScores) {
+          scores.splice(0, scores.length);
+          scores.concat(newScores);
+        });
       },
 
       removeListeners: function () {
         socket.removeAllListeners('game:save');
         socket.removeAllListeners('game:remove');
         socket.removeAllListeners('game:create');
+        socket.removeAllListeners('game:scores');
       }
 
     };
