@@ -16,8 +16,17 @@ var GameSchema = new Schema({
   turnPlayer: { type: Number, default: 1 }
 });
 
-module.exports = mongoose.model('Game', GameSchema);
+var Game = mongoose.model('Game', GameSchema);
 
+Game.getTop10 = function(callback){
+  Game.aggregate(
+      {$match:{"winner":{$exists:true}}},
+      {$group:{"_id":"$winner", name:{$first:'$winner'}, score:{$sum:1}}},
+      {$sort:{score : -1}},
+      {$limit:10},
+      function(err, summary){
+        callback(err, summary);
+      })
+};
 
-
-//db.games.aggregate([{$match:{"winner":{$exists:true}}},{$group:{"_id":"$winner", count:{$sum:1}}}])
+module.exports = Game;

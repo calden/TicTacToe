@@ -28,6 +28,27 @@ User.find({}).remove(function() {
 
 Game.find({}).remove(function() {
   Game.create({
+  	player1 : "Test",
+  	player2 : "Admin",
+  	turnPlayer : 1,
+  	stateGame : "Over",
+  	stateBoard : "X_XOOOX__",
+  	winner : "Admin"
+  },{
+  	player1 : "Test",
+  	player2 : "Admin",
+  	turnPlayer : 1,
+  	stateGame : "Over",
+  	stateBoard : "XX_OOOX__",
+  	winner : "Admin"
+  },{
+  	player1 : "Test",
+  	player2 : "Admin",
+  	turnPlayer : 1,
+  	stateGame : "Over",
+  	stateBoard : "XXXOO____",
+  	winner : "Test"
+  },{
     player1: "Test",
     player2: "Admin",
     stateGame: "Pending",
