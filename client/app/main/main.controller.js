@@ -1,10 +1,11 @@
 'use strict';
 
 angular.module('ticTacToeApp')
-  .controller('MainCtrl', ['$scope', '$state', '$rootScope', 'games', 'socket', 'Auth',
-    function ($scope, $state, $rootScope, games, socket, Auth) {
+  .controller('MainCtrl', ['$scope', '$state', '$rootScope', 'games', 'scores', 'socket', 'Auth',
+    function ($scope, $state, $rootScope, games, scores, socket, Auth) {
 
       socket.manageGames(games);
+      socket.manageScores(scores);
 
       $scope.select = function (game) {
         $state.go('main.gameboard', {idGame: game._id});
@@ -13,6 +14,8 @@ angular.module('ticTacToeApp')
       $scope.createGame = function () {
         $state.go('main.creategame');
       };
+
+      $scope.scores = scores;
 
       $scope.games = games;
 

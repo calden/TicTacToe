@@ -10,6 +10,21 @@ angular.module('ticTacToeApp')
         resolve: {
           games: function (Game) {
             return Game.getAll();
+          },
+          scores: function (Game) {
+            return Game.getScores();
+            /*return [
+              { name: "Test",    score: 100 },
+              { name: "Admin",   score: 75 },
+              { name: "Player3", score: 50 },
+              { name: "Player4", score: 40 },
+              { name: "Player5", score: 30 },
+              { name: "Player6", score: 20 },
+              { name: "Player7", score: 10 },
+              { name: "Player8", score: 9 },
+              { name: "Player9", score: 8 },
+              { name: "Player10",score: 7 }
+            ];*/
           }
         },
         controller: 'MainCtrl'

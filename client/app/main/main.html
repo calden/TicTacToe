@@ -7,7 +7,8 @@
 
     <!-- Game Management -->
     <div class="col-md-6">
-      <div class="panel panel-default">
+
+      <div class="panel panel-default panel-games">
 
         <!-- Game creation -->
         <div class="panel-heading">
@@ -22,7 +23,7 @@
         <!-- Game list -->
         <div class="panel-body">
           <div class="list-group list-games" ng-repeat="game in games">
-            <!--{(game._id == currentGameId) : selected}-->
+
             <div class="list-group-item" ng-click="select(game)" ng-class="{ active: game._id == currentGameId }">
 
               <!-- Actions buttons -->
@@ -52,9 +53,38 @@
         </div>
 
       </div>
+
+      <div class="panel panel-default panel-scores">
+
+        <!-- Titre list -->
+        <div class="panel-heading">
+          <div class="panel-title"><h5>Classement</h5></div>
+        </div>
+
+        <!-- Scores -->
+        <div class="panel-body">
+          <div class="list-group list-scores" ng-repeat="userScore in scores">
+            <div class="list-group-item">
+
+              <!-- Victoires -->
+              <div class="pull-right btn-group btn-group-sm">
+                <label>{{userScore.score}}</label>
+              </div>
+
+              <!-- Nom du joueur -->
+              <div class="bold">
+                {{$index+1}} <span class="glyphicon glyphicon-arrow-right"></span> {{userScore.name}}
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
     </div>
 
-    <!-- Game panel -->
+    <!-- Gameboard panel -->
     <div class="col-md-6">
       <!--<div class="row-fluid">-->
       <!--class="pull-left"-->

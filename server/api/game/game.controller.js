@@ -82,6 +82,26 @@ exports.destroy = function(req, res) {
   });
 };
 
+// Get scores list
+exports.scores = function(req, res) {
+
+  // TODO : Query for hight scores mongodb
+
+  var scores = [
+    { name: "Test",    score: 100 },
+    { name: "Admin",   score: 75 },
+    { name: "Player3", score: 50 },
+    { name: "Player4", score: 40 },
+    { name: "Player5", score: 30 },
+    { name: "Player6", score: 20 },
+    { name: "Player7", score: 10 },
+    { name: "Player8", score: 9 },
+    { name: "Player9", score: 8 },
+    { name: "Player10",score: 7 }
+  ];
+  return res.json(200, scores);
+};
+
 function handleError(res, err) {
   return res.send(500, err);
 }

@@ -13,4 +13,6 @@ router.put('/:id', controller.update);
 router.patch('/:id', controller.update);
 router.delete('/:id', controller.destroy);
 
+router.get('/scores/10', controller.scores);
+
 module.exports = router;

@@ -29,14 +29,19 @@ angular.module('ticTacToeApp')
         playTurn: {
           method: 'POST',
           url: '/api/games/:id/:position'
+        },
+        getScores: {
+          method: 'GET',
+          url: '/api/games/scores/10',
+          isArray: true
         }
       });
     game.prototype.canJoin = function () {
-      return this.stateGame === 'Opened' && this.player1 !== Auth.getCurrentUser().name;
+      return angular.isDefined(Auth.getCurrentUser().name) && this.stateGame === 'Opened' && this.player1 !== Auth.getCurrentUser().name;
     };
 
     game.prototype.canTrash = function () {
-      return this.player1 === Auth.getCurrentUser().name;
+      return this.player1 === Auth.getCurrentUser().name && this.stateGame === 'Opened';
     };
 
     return game;
