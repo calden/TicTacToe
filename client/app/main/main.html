@@ -8,7 +8,7 @@
     <!-- Game Management -->
     <div class="col-md-6">
 
-      <div class="panel panel-default panel-games">
+      <div class="panel panel-default panel-games panel-info">
 
         <!-- Game creation and filter-->
         <div class="panel-heading">
@@ -19,7 +19,7 @@
               <button class="btn btn-default btn-xs" ng-class="{active: stateFilter == '!Over'}" ng-click="stateFilter = '!Over'" type="button">
                 Actives
               </button>
-              <!-- Filter all -->
+              <!-- Filter closed -->
               <button class="btn btn-default btn-xs" ng-class="{active: stateFilter == 'Over'}" ng-click="stateFilter = 'Over'" type="button">
                 Terminées
               </button>
@@ -51,7 +51,7 @@
 
               <!-- Game label -->
               <div class="bold">
-                {{$index+1}} <span class="glyphicon glyphicon-arrow-right"></span> {{game.player1}} vs {{game.player2}}
+                <span>{{game.player1}} vs {{game.player2}}</span>
                 <button class="btn btn-primary btn-xs btn-success" ng-show="game.canJoin()" ng-click="join(game)" type="button">
                   Joindre
                 </button>
@@ -68,7 +68,7 @@
 
       </div>
 
-      <div class="panel panel-default panel-scores">
+      <div class="panel panel-default panel-scores panel-success">
 
         <!-- Titre list -->
         <div class="panel-heading">
@@ -87,7 +87,7 @@
 
               <!-- Nom du joueur -->
               <div class="bold">
-                {{$index+1}} <span class="glyphicon glyphicon-arrow-right"></span> {{userScore.name}}
+                <span>{{$index+1}}</span> <span class="glyphicon glyphicon-user"></span> <span>{{userScore.name}}</span>
               </div>
 
             </div>
