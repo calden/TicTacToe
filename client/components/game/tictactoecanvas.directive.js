@@ -136,7 +136,20 @@ angular.module('ticTacToeApp')
         updateMessage();
       }
 
+      function onResize() {
+        window.removeEventListener("resize", onResize);
+        if (renderer !== undefined) {
+          var options = renderer.options;
+          renderer.destroy();
+          init(options);
+        }
+      }
+
       function init(options) {
+
+        var elem = options.container;
+        elem.height(elem.width());
+        window.addEventListener("resize", onResize);
 
         if ($scope.game === undefined) {
           // TODO : Recup jeux en cours (cas du refresh de page)
@@ -181,6 +194,7 @@ angular.module('ticTacToeApp')
           renderer.destroy();
           renderer = undefined;
         }
+        window.removeEventListener("resize", onResize);
         $rootScope.currentGameId = undefined;
       });
 
