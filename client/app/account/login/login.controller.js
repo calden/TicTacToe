@@ -7,6 +7,18 @@ angular.module('ticTacToeApp')
 
     $scope.errors = {};
 
+    $scope.connectTest = function () {
+      $scope.user.email = 'test@test.com';
+      $scope.user.password = 'test';
+      $scope.login({$valid: true});
+    };
+
+    $scope.connectAdmin = function () {
+      $scope.user.email = 'admin@admin.com';
+      $scope.user.password = 'admin';
+      $scope.login({$valid: true});
+    };
+
     $scope.login = function (form) {
       $scope.submitted = true;
 

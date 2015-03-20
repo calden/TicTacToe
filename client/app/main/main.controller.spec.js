@@ -14,7 +14,7 @@ describe('Controller: MainCtrl', function () {
   beforeEach(inject(function ($controller, $rootScope) {
 
     scope = $rootScope.$new();
-    injectedGames = "foo";
+    injectedGames = 'foo';
 
     MainCtrl = $controller('MainCtrl', {
       $scope: scope,
@@ -58,4 +58,4 @@ describe ('Service : games', function(){
       $httpBackend.flush();
       expect(result.length).toEqual(allGames.length);
   }));
-})
+});

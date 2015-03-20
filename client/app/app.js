@@ -18,6 +18,7 @@ angular.module('ticTacToeApp', [
 
   .factory('authInterceptor', function ($rootScope, $q, $cookieStore, $location) {
     return {
+
       // Add authorization token to headers
       request: function (config) {
         config.headers = config.headers || {};
@@ -39,15 +40,19 @@ angular.module('ticTacToeApp', [
           return $q.reject(response);
         }
       }
+
     };
   })
+
   .factory('_', ['$window',
       function($window) {
         // place lodash include before angular
         return $window._;
       }
     ])
+
   .run(function ($rootScope, $location, Auth) {
+
     // Redirect to login if route requires auth and you're not logged in
     $rootScope.$on('$stateChangeStart', function (event, next) {
       Auth.isLoggedInAsync(function(loggedIn) {

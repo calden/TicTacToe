@@ -434,6 +434,13 @@ angular.module('ticTacToeApp')
         container.removeChild(canvas);
       };
 
+      Object.defineProperty(that, 'options', {
+        get: function () {
+          return options;
+        }
+      });
+
+
       ctor();
     }
 
