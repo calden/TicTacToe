@@ -17,3 +17,7 @@ var GameSchema = new Schema({
 });
 
 module.exports = mongoose.model('Game', GameSchema);
+
+
+
+//db.games.aggregate([{$match:{"winner":{$exists:true}}},{$group:{"_id":"$winner", count:{$sum:1}}}])
