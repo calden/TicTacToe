@@ -1,11 +1,15 @@
 'use strict';
 
 angular.module('ticTacToeApp')
+
+  // Game constantes
   .constant('signPlayer1', 'X')
   .constant('signPlayer2', 'O')
   .constant('signEmpty', '_')
   .constant('player1', '1')
   .constant('player2', '2')
+
+  // Game ressource ajax rest access
   .factory('Game', ['$resource', 'Auth', function ($resource, Auth) {
 
     var game;
@@ -46,7 +50,9 @@ angular.module('ticTacToeApp')
 
     return game;
   }])
-  .service('gameService', ['_', 'Game', 'signPlayer1', 'signPlayer2', function (_, Game, signPlayer1, signPlayer2) {
+
+  // Game helpers
+  .service('gameService', ['_', 'signPlayer1', 'signPlayer2', function (_, signPlayer1, signPlayer2) {
 
     function playTurn(currentGame, position, numberUser) {
       var pos = parseInt(position);
@@ -56,7 +62,8 @@ angular.module('ticTacToeApp')
     }
 
     function isBlocked(currentGame, numberUser) {
-      return !(numberUser === currentGame.turnPlayer && currentGame.stateGame === 'Pending'); //&& currentGame.stateGame !== 'Over' && currentGame.stateGame !== 'Opened');
+      return !(numberUser === currentGame.turnPlayer && currentGame.stateGame === 'Pending');
+      //&& currentGame.stateGame !== 'Over' && currentGame.stateGame !== 'Opened');
     }
 
     function identifyPlayer(currentGame, name) {
