@@ -12,7 +12,7 @@ var GameSchema = new Schema({
   player2: String,
   stateBoard: { type: String, default: "_________" },
   stateGame: { type: String, default: "Opened" },
-  numberWinner: Number,
+  winner: String,
   turnPlayer: { type: Number, default: 1 }
 });
 
