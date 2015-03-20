@@ -20,15 +20,18 @@
   font-size: 24px;
 }
 
-#panel-base {
-  //max-height: 300px;
-  height: 500px;
-  overflow: auto;
-}
 .panel-games {
 
+  .panel-heading {
+    .game-filter-toolbar {
+      margin-right: 20px;
+    }
+  }
+
   .panel-body {
-    @extend #panel-base;
+
+    height: 360px;
+    overflow: auto;
 
     .list-games {
 
@@ -78,12 +81,12 @@
 }
 
 
-.panel-scores {
-  .panel-body {
-    @extend #panel-base;
-    //.list-scores {}
-  }
-}
+//.panel-scores {
+//  .panel-body {
+//    height: 640px;
+//    overflow: auto;
+//  }
+//}
 
 .hero-unit {
     position: relative;

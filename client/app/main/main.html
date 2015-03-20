@@ -10,25 +10,39 @@
 
       <div class="panel panel-default panel-games">
 
-        <!-- Game creation -->
+        <!-- Game creation and filter-->
         <div class="panel-heading">
+
           <div class="pull-right">
+            <div class="btn-group game-filter-toolbar">
+              <!-- Filter active -->
+              <button class="btn btn-default btn-xs" ng-class="{active: stateFilter == '!Over'}" ng-click="stateFilter = '!Over'" type="button">
+                Actives
+              </button>
+              <!-- Filter all -->
+              <button class="btn btn-default btn-xs" ng-class="{active: stateFilter == 'Over'}" ng-click="stateFilter = 'Over'" type="button">
+                Terminées
+              </button>
+            </div>
+            <!-- Game creation -->
             <button class="btn btn-primary" ng-click="createGame()" type="button">
               Créer partie
             </button>
           </div>
+
           <div class="panel-title"><h5>Liste des parties</h5></div>
+
         </div>
 
         <!-- Game list -->
         <div class="panel-body">
-          <div class="list-group list-games" ng-repeat="game in games">
+          <div class="list-group list-games" ng-repeat="game in games | filter:{stateGame: stateFilter}">
 
             <div class="list-group-item" ng-click="select(game)" ng-class="{ active: game._id == currentGameId }">
 
               <!-- Actions buttons -->
               <div class="pull-right btn-group btn-group-sm">
-                <button type="button" class="btn btn-danger" ng-show="game.canTrash()" ng-click="game.$remove()">
+                <button type="button" class="btn btn-danger" ng-show="game.canTrash()" ng-click="remove(game)">
                   <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                 </button>
                 <!--Supprimer-->
