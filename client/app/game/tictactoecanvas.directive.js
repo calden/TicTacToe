@@ -151,20 +151,8 @@ angular.module('ticTacToeApp')
         elem.height(elem.width());
         window.addEventListener('resize', onResize);
 
-        if ($scope.game === undefined) {
-          // TODO : Recup jeux en cours (cas du refresh de page)
-          console.error('Instance game non injecté, hack temporaire...');
-          Game.get({id: window.location.pathname.split('/')[2]})
-            .$promise
-            .then(function (g) {
-              $scope.game = g;
-              init(options);
-            });
-          return;
-        } else {
-          gameId = $scope.game._id;
-          $rootScope.currentGameId = gameId;
-        }
+        gameId = $scope.game._id;
+        $rootScope.currentGameId = gameId;
 
         renderer = new TicTacToeRenderer(options);
 
@@ -181,9 +169,6 @@ angular.module('ticTacToeApp')
 
       $offGameRemoteUpdate = $rootScope.$on('game:remoteUpdate', function (e, g) {
         if (g._id === gameId) {
-          if ($scope.game !== g) { // get the global instance if not
-            $scope.game = g;
-          }
           syncBoard();
         }
       });
