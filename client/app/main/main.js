@@ -9,7 +9,7 @@ angular.module('ticTacToeApp')
         templateUrl: 'app/main/main.html',
         resolve: {
           games: function (Game) {
-            return Game.getAll();
+            return Game.getAll().$promise;
           }
         },
         controller: 'MainCtrl'
