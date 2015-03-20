@@ -17,4 +17,8 @@ exports.register = function(socket) {
     socket.emit('game:create', doc);
   });
 
+  Game.on('game:endGame', function(doc){
+    socket.emit('game:endGame', doc);
+  })
+
 }

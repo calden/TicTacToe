@@ -25,11 +25,11 @@ angular.module('ticTacToeApp')
       function getMessage() {
         //if (isMessageDisplay()) {
         if ($scope.game.stateGame === 'Over') {
-          if (numberUserInGame() === $scope.game.numberWinner) {
+          if (Auth.getCurrentUser().name === $scope.game.winner) {
             messageTarget = 'victory';
             return 'Vous avez gagné !';
           } else {
-            if ($scope.game.numberWinner !== 0) {
+            if ($scope.game.winner !== 0) {
               messageTarget = 'loose';
               return 'Vous avez perdu !';
             } else {

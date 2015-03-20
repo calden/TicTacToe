@@ -28,7 +28,7 @@ angular.module('ticTacToeApp')
           gameToUpdate.turnPlayer = game.turnPlayer;
           gameToUpdate.player1 = game.player1;
           gameToUpdate.player2 = game.player2;
-          gameToUpdate.numberWinner = game.numberWinner;
+          gameToUpdate.winner = game.winner;
           // Notify game update
           $rootScope.$broadcast('game:remoteUpdate', gameToUpdate);
         });

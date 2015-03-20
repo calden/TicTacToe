@@ -20,7 +20,7 @@ exports.validateTurn = function(req,res,game) {
 };
 
 /**
- * Fonction permettant de jouer le coup , verifier si ya un gagnant et de sauver l'etat du jeu
+ * Fonction permettant de jouer le coup , verifier si il y a un gagnant et de sauver l'etat du jeu
  */
 exports.playTurn = function(req,res,game) {
   var numberPlayer = identifyPlayer(game,req.user.name);
@@ -29,11 +29,10 @@ exports.playTurn = function(req,res,game) {
   game.stateBoard =state.substring(0,pos)+signPlayer[numberPlayer]+state.substring(pos+1,9);
   if (checkWinnerGame(game,signPlayer[numberPlayer])) {
     game.stateGame = stateOver;
-    game.numberWinner = numberPlayer;
+    game.winner = req.user.name;
   } else {
    if(checkDraw(game)) {
      game.stateGame = stateOver;
-     game.numberWinner = 0;
    } else {
      game.turnPlayer = numberPlayer===1 ? 2 : 1;
    }
@@ -41,6 +40,11 @@ exports.playTurn = function(req,res,game) {
   game.save(function (err) {
     if (err) { return handleError(res, err); }
     Game.emit('game:save', game);
+    if(game.winner){
+      var top10;
+//      top10 = aggregat Mongo
+      Game.emit('game:endGame', top10);
+    }
     return res.json(200, game);
   });
 
