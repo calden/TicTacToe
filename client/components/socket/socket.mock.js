@@ -16,6 +16,8 @@ angular.module('socketMock', [])
 
       manageGames: function () {
       },
+      manageScores:function () {
+      },
       removeListeners: function () {
       }
     };

@@ -3,24 +3,16 @@ var sinon = require('sinon');
 
 describe('game management', function(){
 
-  it('should reply 500 if position is already played', function(){
+  it('should return an error on the callback if position is already played', function(){
     var spy = sinon.spy()
-    var res = {
-      send : spy
-    };
-    var req = {
-      params:{
-        position:5
-      }
-    };
 
     var game = {
       stateBoard:'_____X___'
     };
 
-    gameService.validateTurn(req, res, game);
+    gameService.validateAndplayTurn(game, 5, 'Bob', spy);
 
-    sinon.assert.calledWith(spy, 500)
+    sinon.assert.calledWith(spy, "Impossible de jouer sur cette case.");
   })
 
 })
