@@ -18,7 +18,8 @@ describe('Controller: MainCtrl', function () {
 
     MainCtrl = $controller('MainCtrl', {
       $scope: scope,
-      games : injectedGames
+      games : injectedGames,
+      scores : {}
     });
 
 
