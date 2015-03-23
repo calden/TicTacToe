@@ -40,13 +40,11 @@
 
             <div class="list-group-item" ng-click="select(game)" ng-class="{ active: game._id == currentGameId }">
 
-              <!-- Actions buttons -->
+              <!-- Boutons à droite -->
               <div class="pull-right btn-group btn-group-sm">
                 <button type="button" class="btn btn-danger" ng-show="game.canTrash()" ng-click="remove(game)">
                   <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                 </button>
-                <!--Supprimer-->
-                <!--<button class="btn btn-xs btn-primary" ng-click="select(game)" type="button">Voir</button>-->
               </div>
 
               <!-- Game label -->
@@ -100,10 +98,7 @@
 
     <!-- Gameboard panel -->
     <div class="col-md-6">
-      <!--<div class="row-fluid">-->
-      <!--class="pull-left"-->
-        <div ui-view ></div>
-      <!--</div>-->
+      <div ui-view ></div>
     </div>
 
   </div>

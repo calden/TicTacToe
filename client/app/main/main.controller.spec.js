@@ -21,14 +21,12 @@ describe('Controller: MainCtrl', function () {
       games : injectedGames
     });
 
-
   }));
 
   it('should attach the injected list of games to the scope', function () {
     expect(scope.games).toBe(injectedGames);
   });
 });
-
 
 describe ('Service : games', function(){
   // load the controller's module
