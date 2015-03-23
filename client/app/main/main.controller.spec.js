@@ -16,7 +16,7 @@ describe('Controller: MainCtrl', function () {
     scope = $rootScope.$new();
     injectedGames = 'foo';
 
-    MainCtrl = $controller('MainCtrl', {
+    MainCtrl = $controller('MainCtrl as main', {
       $scope: scope,
       games : injectedGames,
       scores : {}
@@ -25,7 +25,7 @@ describe('Controller: MainCtrl', function () {
   }));
 
   it('should attach the injected list of games to the scope', function () {
-    expect(scope.games).toBe(injectedGames);
+    expect(scope.main.games).toBe(injectedGames);
   });
 });
 
