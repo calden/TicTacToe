@@ -4,13 +4,16 @@ angular.module('ticTacToeApp')
   .controller('controllerNewGame', [
     '$scope',
     '$state',
+    '$timeout',
     'Auth',
     'Game',
-    function ($scope, $state, Auth, Game) {
+    function ($scope, $state, $timeout, Auth, Game) {
 
       $scope.userConnected = angular.isDefined(Auth.getCurrentUser().name);
 
       $scope.gameCreated = false;
+
+      $scope.gameCreatedId = undefined;
 
       $scope.model = { firstPlayer: true };
 
@@ -21,10 +24,19 @@ angular.module('ticTacToeApp')
       };
 
       $scope.validateNewGame = function () {
-
         //$scope.newGame.turnPlayer = $scope.model.firstPlayer ? 1 : 2;
-        $scope.newGame = Game.save($scope.newGame);
-        $scope.gameCreated = true;
+        $scope.newGame = Game.save($scope.newGame)
+          .$promise.then(function (createdGame) {
+            $scope.gameCreatedId = createdGame._id;
+            // Wait game list update before display board
+            $timeout(
+              function () {
+                $state.go('main.gameboard', {idGame: $scope.gameCreatedId});
+              },
+              50
+            );
+          });
+        //$scope.gameCreated = true;
       };
 
       $scope.display = function () {

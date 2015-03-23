@@ -40,6 +40,8 @@ angular.module('ticTacToeApp')
         });
         socket.on('game:create', function (game) {
           games.push(new Game(game));
+          // Notify game creation
+          //$rootScope.$broadcast('game:remoteCreate', _.last(games));
         });
       },
 
