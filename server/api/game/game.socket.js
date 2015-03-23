@@ -21,4 +21,4 @@ exports.register = function(socket) {
     socket.emit('game:scores', top10);
   })
 
-}
+};

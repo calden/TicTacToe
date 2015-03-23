@@ -7,7 +7,10 @@ describe('game management', function(){
     var spy = sinon.spy()
 
     var game = {
-      stateBoard:'_____X___'
+      player1 : 'Bob',
+      stateGame : 'Pending',
+      stateBoard:'_____X___',
+      turnPlayer: 1
     };
 
     gameService.validateAndplayTurn(game, 5, 'Bob', spy);
