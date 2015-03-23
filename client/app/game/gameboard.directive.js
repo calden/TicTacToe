@@ -464,16 +464,18 @@ angular.module('ticTacToeApp')
         message: '='
       },
       restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
+      controllerAs: 'vm',
+      bindToController: true,
       controller: function ($scope) {
-
+        var vm = this;
         var renderer;
 
-        $scope.canvasOptions = {};
+        vm.canvasOptions = {};
 
 
         function syncBoard() {
 
-          var gameState = $scope.game.stateBoard;
+          var gameState = vm.game.stateBoard;
 
           renderer.forEachCell(
             function (cell) {
@@ -510,32 +512,32 @@ angular.module('ticTacToeApp')
         function init() {
           console.log("gameboard directive controller init called ...", $scope);
 
-          var elem = $scope.canvasOptions.container;
+          var elem = vm.canvasOptions.container;
           elem.height(elem.width());
           window.addEventListener('resize', onResize);
 
-          renderer = new GameCanvas($scope.canvasOptions);
+          renderer = new GameCanvas(vm.canvasOptions);
 
           syncBoard();
 
           renderer.onCellRequest(function (cell) {
             console.log("canvas onCellRequest", arguments);
-            $scope.playturn(cell);
+            vm.playturn(cell);
           });
 
         }
 
         // Observe game options
-        $scope.$watch('canvasOptions', function(newValue, oldValue) {
+        $scope.$watch('vm.canvasOptions', function(newValue, oldValue) {
           init();
         });
 
         // Observe game state
-        $scope.$watch('game.stateBoard', function(newValue, oldValue) {
+        $scope.$watch('vm.game.stateBoard', function(newValue, oldValue) {
           syncBoard();
         });
 
-        $scope.$watch('message', function (newValue, oldValue) {
+        $scope.$watch('vm.message', function (newValue, oldValue) {
           renderer.clearMessages();
           if (newValue === undefined) {
             return;
@@ -600,4 +602,3 @@ angular.module('ticTacToeApp')
       }
     }
   }]);
-

@@ -15,12 +15,12 @@ angular.module('ticTacToeApp')
             return Game.getScores().$promise;
           }
         },
-        controller: 'MainCtrl'
+        controller: 'MainCtrl as main'
       })
       .state('main.gameboard', {
         url: 'gameboard/:idGame',
         templateUrl: 'app/game/gameboard.html',
-        controller: 'GameboardCtrl'
+        controller: 'GameboardCtrl as vm'
       })
       .state('main.creategame', {
         url: 'creategame',
