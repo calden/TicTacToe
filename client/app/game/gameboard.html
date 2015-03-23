@@ -12,10 +12,9 @@
         <span class="symbol-j2"></span>
       </span>
     </h3>
-    <button ng-click="vm.close()" class="btn btn-primary btn-close-gameboard" type="button">Fermer</button>
+    <button ng-click="main.close()" class="btn btn-primary btn-close-gameboard" type="button">Fermer</button>
   </div>
   <div class="tictactoe-body">
-    {{vm.activeGame}}
     <gameboard game="vm.activeGame" playturn="vm.playTurnRequest" message="vm.message"/>
   </div>
 </div>

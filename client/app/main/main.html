@@ -16,16 +16,16 @@
           <div class="pull-right">
             <div class="btn-group game-filter-toolbar">
               <!-- Filter active -->
-              <button class="btn btn-default btn-xs" ng-class="{active: stateFilter == '!Over'}" ng-click="stateFilter = '!Over'" type="button">
+              <button class="btn btn-default btn-xs" ng-class="{active: main.stateFilter == '!Over'}" ng-click="main.stateFilter = '!Over'" type="button">
                 Actives
               </button>
               <!-- Filter closed -->
-              <button class="btn btn-default btn-xs" ng-class="{active: stateFilter == 'Over'}" ng-click="stateFilter = 'Over'" type="button">
+              <button class="btn btn-default btn-xs" ng-class="{active: main.stateFilter == 'Over'}" ng-click="main.stateFilter = 'Over'" type="button">
                 Terminées
               </button>
             </div>
             <!-- Game creation -->
-            <button class="btn btn-primary" ng-click="createGame()" type="button">
+            <button class="btn btn-primary" ng-click="main.createGame()" type="button">
               Créer partie
             </button>
           </div>
@@ -36,13 +36,13 @@
 
         <!-- Game list -->
         <div class="panel-body">
-          <div class="list-group list-games" ng-repeat="game in games | filter:{stateGame: stateFilter}">
+          <div class="list-group list-games" ng-repeat="game in main.games | filter:{stateGame: main.stateFilter}">
 
-            <div class="list-group-item" ng-click="select(game)" ng-class="{ active: game._id == currentGameId }">
+            <div class="list-group-item" ng-click="main.select(game)" ng-class="{ active: game._id == currentGameId }">
 
               <!-- Boutons à droite -->
               <div class="pull-right btn-group btn-group-sm">
-                <button type="button" class="btn btn-danger" ng-show="game.canTrash()" ng-click="remove(game)">
+                <button type="button" class="btn btn-danger" ng-show="game.canTrash()" ng-click="main.remove(game)">
                   <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                 </button>
               </div>
@@ -50,7 +50,7 @@
               <!-- Game label -->
               <div class="bold">
                 <span>{{game.player1}} vs {{game.player2}}</span>
-                <button class="btn btn-primary btn-xs btn-success" ng-show="game.canJoin()" ng-click="join(game)" type="button">
+                <button class="btn btn-primary btn-xs btn-success" ng-show="game.canJoin()" ng-click="main.join(game)" type="button">
                   Joindre
                 </button>
               </div>
@@ -75,7 +75,7 @@
 
         <!-- Scores -->
         <div class="panel-body">
-          <div class="list-group list-scores" ng-repeat="userScore in scores">
+          <div class="list-group list-scores" ng-repeat="userScore in main.scores">
             <div class="list-group-item">
 
               <!-- Victoires -->

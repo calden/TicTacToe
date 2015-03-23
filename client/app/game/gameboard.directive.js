@@ -553,10 +553,10 @@ angular.module('ticTacToeApp')
       },
       template: '<div class="tictactoeContainer"></div>',
       replace: true,
-      link: function ($scope, elem, attrs, controller) {
+      link: function ($scope, elem, attrs, controllerAsVm) {
 
         // Set game board options
-        $scope.canvasOptions = {
+        controllerAsVm.canvasOptions = {
           container: elem,
           width: attrs.gameWidth || 3,
           height: attrs.gameHeight || 3,
