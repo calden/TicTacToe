@@ -163,11 +163,25 @@ angular.module('ticTacToeApp')
 
       }
 
+      function getCellByMouseEvent(e) {
+        var rect = e.target.getBoundingClientRect(), px, py, x, y;
+        // Pixels position
+        px = e.clientX - rect.left;
+        py = e.clientY - rect.top;
+        if (px < 0 || py < 0 || px > gameSize.width || py > gameSize.height) {
+          return undefined;
+        }
+        // Cell position
+        x = Math.ceil(px / cellSize.width) - 1;
+        y = Math.ceil(py / cellSize.height) - 1;
+        return getCell(x, y);
+      }
+
       function clickHandler(e) {
         if (locked) {
           return;
         }
-        var cell = getCellByCoord(e.offsetX || e.layerX, e.offsetY || e.layerY);
+        var cell = getCellByMouseEvent(e);
         if (cell !== undefined) {
           fnCellRequest.forEach(function (fn) {
             fn.call(this, cell);
@@ -179,8 +193,7 @@ angular.module('ticTacToeApp')
         if (locked) {
           return;
         }
-
-        var newCell = getCellByCoord(e.offsetX || e.layerX, e.offsetY || e.layerY);
+        var newCell = getCellByMouseEvent(e);
         if (hoverCell === undefined || hoverCell.ix !== newCell.ix || hoverCell.iy !== newCell.iy) {
           hoverCell = newCell;
           that.redraw();
@@ -190,17 +203,6 @@ angular.module('ticTacToeApp')
       function mouseLeaveHandler() {
         hoverCell = undefined;
         that.redraw();
-      }
-
-      function getCellByCoord(px, py) {
-        var x, y;
-        if (px < 0 || py < 0 || px > gameSize.width || py > gameSize.height) {
-          return undefined;
-        }
-
-        x = Math.ceil(px / cellSize.width) - 1;
-        y = Math.ceil(py / cellSize.height) - 1;
-        return getCell(x, y);
       }
 
       function getCell(x, y) {
