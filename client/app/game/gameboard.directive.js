@@ -3,7 +3,7 @@
 'use strict';
 
 angular.module('ticTacToeApp')
-  .factory('ticTacToeRenderer', [function () {
+  .factory('gameCanvas', [function gameCanvasFactory() {
 
     var defOptions = {
         gameDim: {width: 3, height: 3},
@@ -28,7 +28,7 @@ angular.module('ticTacToeApp')
     // Polyfil for requestAnimationFrame
     reqAnim = (function () {
 
-      function polyRequestAnimationFrame(callback, that) {
+      function polyfillRequestAnimationFrame(callback, that) {
         if (callback._firstRequestAnimationFrame === undefined) {
           callback._firstRequestAnimationFrame = new Date().getTime();
         }
@@ -45,7 +45,7 @@ angular.module('ticTacToeApp')
         win.requestAnimationFrame ||
         win.webkitRequestAnimationFrame ||
         win.mozRequestAnimationFrame ||
-        polyRequestAnimationFrame;
+        polyfillRequestAnimationFrame;
 
       return win.requestAnimationFrame;
     }());
@@ -407,6 +407,13 @@ angular.module('ticTacToeApp')
         that.redraw();
       };
 
+      that.clearMessages = function () {
+        options.messages.forEach(function (msgDef) {
+          messages[msgDef.id] = undefined;
+        });
+        that.redraw();
+      };
+
       Object.defineProperty(that, 'locked', {
         set: function (nlocked) {
           locked = nlocked;
@@ -446,4 +453,151 @@ angular.module('ticTacToeApp')
 
     return TictactoeRenderer;
 
+  }])
+  .directive('gameboard', [ '$window', 'gameCanvas', 'signPlayer1', 'signPlayer2', function ($window, GameCanvas, signPlayer1, signPlayer2) {
+
+    // Runs during compile
+    return {
+      scope: {
+        game: '=',
+        playturn: '=',
+        message: '='
+      },
+      restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
+      controller: function ($scope) {
+
+        var renderer;
+
+        $scope.canvasOptions = {};
+
+
+        function syncBoard() {
+
+          var gameState = $scope.game.stateBoard;
+
+          renderer.forEachCell(
+            function (cell) {
+
+              var remoteSate;
+              switch (gameState.charAt(cell.index)) {
+              case signPlayer1:
+                remoteSate = 1;
+                break;
+              case signPlayer2:
+                remoteSate = 2;
+                break;
+              }
+
+              if (remoteSate !== cell.state) {
+                renderer.setCell(cell.ix, cell.iy, remoteSate);
+              }
+
+            }
+          );
+
+          //updateGameState();
+        }
+
+        function onResize() {
+          window.removeEventListener('resize', onResize);
+          if (renderer !== undefined) {
+            var options = renderer.options;
+            renderer.destroy();
+            init(options);
+          }
+        }
+
+        function init() {
+          console.log("gameboard directive controller init called ...", $scope);
+
+          var elem = $scope.canvasOptions.container;
+          elem.height(elem.width());
+          window.addEventListener('resize', onResize);
+
+          renderer = new GameCanvas($scope.canvasOptions);
+
+          syncBoard();
+
+          renderer.onCellRequest(function (cell) {
+            console.log("canvas onCellRequest", arguments);
+            $scope.playturn(cell);
+          });
+
+        }
+
+        // Observe game options
+        $scope.$watch('canvasOptions', function(newValue, oldValue) {
+          init();
+        });
+
+        // Observe game state
+        $scope.$watch('game.stateBoard', function(newValue, oldValue) {
+          syncBoard();
+        });
+
+        $scope.$watch('message', function (newValue, oldValue) {
+          renderer.clearMessages();
+          if (newValue === undefined) {
+            return;
+          }
+          renderer.setMessage(newValue.target, newValue.message);
+          console.log("Message mis à jour", newValue);
+        });
+
+        $scope.$on('$destroy', function destroy() {
+          window.removeEventListener('resize', onResize);
+        });
+
+      },
+      template: '<div class="tictactoeContainer"></div>',
+      replace: true,
+      link: function ($scope, elem, attrs, controller) {
+
+        // Set game board options
+        $scope.canvasOptions = {
+          container: elem,
+          width: attrs.gameWidth || 3,
+          height: attrs.gameHeight || 3,
+          colors: {
+            bg: '#F8F8F8',                            // Background color
+            grid: 'rgba(0,0,150,0.7)',                // Grid line color
+            p1: 'rgba(0,255,0,1)',                    // Player 1 color
+            p2: 'rgba(200,0,0,1)',                    // PLayer 2 Color
+            hoverCell: 'rgba(50, 50, 50, 0.3)'
+          },
+          draw: {p1: 'cross', p2: 'circle'},          // Players drawing forms
+          messages: [                                 // Canvas message board definition
+            {
+              id: 'center',                           // Id used for setMessage method
+              position: 'center',                     // Message position in canvas 'center' or 'x,y' in pixel units
+              fontSize: 24,                           // Text font size
+              font: 'Verdana',                        // Text font family
+              text: undefined,                        // Initial text value (undefined if hide)
+              color: 'rgba(255, 255, 255, 0.5)',      // Text color
+              bgcolor: 'rgba(100, 0, 0, 0.5)'         // Text background color
+            },
+            {
+              id: 'victory',                          // Color and font size for victory message
+              position: 'center',
+              fontSize: 36,
+              font: 'Verdana',
+              text: undefined,
+              color: 'rgba(255, 255, 255, 1)',
+              bgcolor: 'rgba(0,150,0,0.8)'
+            },
+            {
+              id: 'loose',                            // Color and font size for defeat message
+              position: 'center',
+              fontSize: 36,
+              font: 'Verdana',
+              text: undefined,
+              color: 'rgba(255, 255, 255, 1)',
+              bgcolor: 'rgba(100,0,0,0.5)'
+            }
+          ]
+        };
+
+      }
+    }
   }]);
+
