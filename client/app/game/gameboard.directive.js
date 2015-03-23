@@ -599,4 +599,3 @@ angular.module('ticTacToeApp')
     };
 
   }]);
-

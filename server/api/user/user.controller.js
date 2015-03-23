@@ -10,6 +10,10 @@ var validationError = function(res, err) {
   return res.json(422, err);
 };
 
+function handleError(res, err) {
+  return res.send(500, err);
+}
+
 /**
  * Get list of users
  * restriction: 'admin'
@@ -105,9 +109,4 @@ exports.scores = function(req, res) {
   Game.getTop10(function(err, scores){
     if(err){ return handleError(res, err); }
     return res.json(200, scores);})
-
 };
-
-function handleError(res, err) {
-  return res.send(500, err);
-}
