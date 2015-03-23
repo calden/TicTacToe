@@ -20,7 +20,6 @@ angular.module('ticTacToeApp')
 
       // Play turn from directive
       $scope.playTurnRequest = function (cell) {
-        console.log("$scope.playTurnRequest !!!!", cell);
         if ($scope.localPlayer !== undefined) {
           $scope.message = $scope.gameLogic.playTurn(cell.index);
         }

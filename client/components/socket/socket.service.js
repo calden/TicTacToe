@@ -50,7 +50,7 @@ angular.module('ticTacToeApp')
           scores.splice(0, scores.length);
           newScores.map(function(item){
             scores.push(item);
-          })
+          });
         });
       },
 

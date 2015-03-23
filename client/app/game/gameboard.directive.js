@@ -472,6 +472,27 @@ angular.module('ticTacToeApp')
 
         $scope.canvasOptions = {};
 
+        // Observe game options
+        $scope.$watch('canvasOptions', function(/*newValue, oldValue*/) {
+          init();
+        });
+
+        // Observe game state
+        $scope.$watch('game.stateBoard', function(/*newValue, oldValue*/) {
+          syncBoard();
+        });
+
+        $scope.$watch('message', function (newValue /*, oldValue*/) {
+          renderer.clearMessages();
+          if (newValue === undefined) {
+            return;
+          }
+          renderer.setMessage(newValue.target, newValue.message);
+        });
+
+        $scope.$on('$destroy', function destroy() {
+          $window.removeEventListener('resize', onResize);
+        });
 
         function syncBoard() {
 
@@ -501,7 +522,7 @@ angular.module('ticTacToeApp')
         }
 
         function onResize() {
-          window.removeEventListener('resize', onResize);
+          $window.removeEventListener('resize', onResize);
           if (renderer !== undefined) {
             var options = renderer.options;
             renderer.destroy();
@@ -510,50 +531,25 @@ angular.module('ticTacToeApp')
         }
 
         function init() {
-          console.log("gameboard directive controller init called ...", $scope);
 
           var elem = $scope.canvasOptions.container;
           elem.height(elem.width());
-          window.addEventListener('resize', onResize);
+          $window.addEventListener('resize', onResize);
 
           renderer = new GameCanvas($scope.canvasOptions);
 
           syncBoard();
 
           renderer.onCellRequest(function (cell) {
-            console.log("canvas onCellRequest", arguments);
             $scope.playturn(cell);
           });
 
         }
 
-        // Observe game options
-        $scope.$watch('canvasOptions', function(newValue, oldValue) {
-          init();
-        });
-
-        // Observe game state
-        $scope.$watch('game.stateBoard', function(newValue, oldValue) {
-          syncBoard();
-        });
-
-        $scope.$watch('message', function (newValue, oldValue) {
-          renderer.clearMessages();
-          if (newValue === undefined) {
-            return;
-          }
-          renderer.setMessage(newValue.target, newValue.message);
-          console.log("Message mis à jour", newValue);
-        });
-
-        $scope.$on('$destroy', function destroy() {
-          window.removeEventListener('resize', onResize);
-        });
-
       },
       template: '<div class="tictactoeContainer"></div>',
       replace: true,
-      link: function ($scope, elem, attrs, controller) {
+      link: function ($scope, elem, attrs /*, controller*/) {
 
         // Set game board options
         $scope.canvasOptions = {
@@ -600,6 +596,7 @@ angular.module('ticTacToeApp')
         };
 
       }
-    }
+    };
+
   }]);
 
