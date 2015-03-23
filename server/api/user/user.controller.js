@@ -1,6 +1,7 @@
 'use strict';
 
 var User = require('./user.model');
+var Game = require('../game/game.model');
 var passport = require('passport');
 var config = require('../../config/environment');
 var jwt = require('jsonwebtoken');
@@ -98,4 +99,12 @@ exports.me = function(req, res, next) {
  */
 exports.authCallback = function(req, res, next) {
   res.redirect('/');
+};
+
+exports.scores = function(req, res) {
+  Game.getTop10(function(err, scores){
+    if(err){ return handleError(res, err);}
+    return res.json(200, scores);
+  })
+
 };

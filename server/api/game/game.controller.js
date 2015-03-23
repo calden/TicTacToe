@@ -5,14 +5,19 @@ var Game = require('./game.model');
 var ruleServiceGame = require('./game.service');
 
 
-/**
- * Fonction d'appel de la recherche avec un Id avec callback
- */
-var findByIdWithCallBack = function (id, callback) {
-  Game.findById(id, function (err, game) {
-    callback(err, game);
+//Load Game and manage 404 reply
+exports.loadGameById = function(req, res, next, id){
+  var query = Game.findById(id);
+
+  query.exec(function(err, game){
+    if(err){return handleError(res, err);}
+    if(!game){
+      return res.status(404).json('no game for this id');
+    }
+    req.game = game;
+    return next();
   });
-};
+}
 
 // Get list of games
 exports.index = function(req, res) {
@@ -24,25 +29,30 @@ exports.index = function(req, res) {
 
 // Validate and play turn
 exports.validateAndPlayTurn = function(req, res) {
-  var validateAndPlayTurnCallBack = function (err, game) {
-    if(err) { return handleError(res, err); }
-    if(!game) { return res.send(404); }
-    else {
-      ruleServiceGame.validateTurn(req,res,game);
-      ruleServiceGame.playTurn(req,res,game);
-    }
+  var position = parseInt(req.params.position);
+  var userName = req.user.name;
+
+  var callback = function(err, game){
+    if(err){return res.status(400).json(err);}
+    game.save(function (err) {
+      if (err) { return handleError(res, err); }
+      Game.emit('game:save', game);
+      if(game.winner){
+        //emit for broadcast of new ranking in the socket
+        Game.getTop10(function(err, scores){
+          Game.emit('game:endGame', scores);
+        });
+      }
+      return res.json(200, game);
+    });
   };
-  findByIdWithCallBack(req.params.id, validateAndPlayTurnCallBack);
+
+  ruleServiceGame.validateAndplayTurn(req.game, position, userName, callback);
 };
 
 // Get a single game
 exports.show = function(req, res) {
-  var callbackShow = function (err, game) {
-    if(err) { return handleError(res, err); }
-    if(!game) { return res.send(404); }
-    return res.json(game);
-  };
-  findByIdWithCallBack(req.params.id,callbackShow);
+  return res.json(req.game);
 };
 
 // Creates a new game in the DB.
@@ -57,38 +67,21 @@ exports.create = function(req, res) {
 // Updates an existing game in the DB.
 exports.update = function(req, res) {
   if(req.body._id) { delete req.body._id; }
-  Game.findById(req.params.id, function (err, game) {
+  var updated = _.merge(req.game, req.body);
+  updated.save(function (err, game) {
     if (err) { return handleError(res, err); }
-    if(!game) { return res.send(404); }
-    var updated = _.merge(game, req.body);
-    updated.save(function (err) {
-      if (err) { return handleError(res, err); }
-      Game.emit('game:save', game);
-      return res.json(200, game);
-    });
+    Game.emit('game:save', game);
+    return res.json(200, game);
   });
 };
 
 // Deletes a game from the DB.
 exports.destroy = function(req, res) {
-  Game.findById(req.params.id, function (err, game) {
+  req.game.remove(function(err) {
     if(err) { return handleError(res, err); }
-    if(!game) { return res.send(404); }
-    game.remove(function(err) {
-      if(err) { return handleError(res, err); }
-      Game.emit('game:remove', game);
-      return res.send(204);
-    });
+    Game.emit('game:remove', req.game);
+    return res.send(204);
   });
-};
-
-// Get scores list
-exports.scores = function(req, res) {
-  Game.getTop10(function(err, scores){
-    if(err){ return handleError(res, err);}
-    return res.json(200, scores);
-  })
-
 };
 
 function handleError(res, err) {

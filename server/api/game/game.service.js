@@ -10,43 +10,28 @@ var signPlayer = { '1': 'X', '2':'O' };
 var stateOver = "Over";
 
 /**
- * Fonction permettant de valider que le coup est possible
- */
-exports.validateTurn = function(req,res,game) {
-  var charAtPosition =  game.stateBoard.charAt(req.params.position);
-   if ( charAtPosition === '' || charAtPosition!=='_' ) {
-     return res.send(500,"Impossible de jouer sur cette case.");
-   }
-};
-
-/**
  * Fonction permettant de jouer le coup , verifier si il y a un gagnant et de sauver l'etat du jeu
  */
-exports.playTurn = function(req,res,game) {
-  var numberPlayer = identifyPlayer(game,req.user.name);
+exports.validateAndplayTurn = function(game, position, userName, callback) {
+  var charAtPosition =  game.stateBoard.charAt(position);
+  if ( charAtPosition === '' || charAtPosition!=='_' ) {
+    callback("Impossible de jouer sur cette case.")
+  }
+  var numberPlayer = identifyPlayer(game,userName);
   var state = game.stateBoard;
-  var pos = parseInt(req.params.position);
+  var pos = parseInt(position,10);
   game.stateBoard =state.substring(0,pos)+signPlayer[numberPlayer]+state.substring(pos+1,9);
   if (checkWinnerGame(game,signPlayer[numberPlayer])) {
     game.stateGame = stateOver;
-    game.winner = req.user.name;
+    game.winner = userName;
   } else {
    if(checkDraw(game)) {
      game.stateGame = stateOver;
    } else {
      game.turnPlayer = numberPlayer===1 ? 2 : 1;
    }
-  }
-  game.save(function (err) {
-    if (err) { return handleError(res, err); }
-    Game.emit('game:save', game);
-    if(game.winner){
-      var top10;
-//      top10 = aggregat Mongo
-      Game.emit('game:endGame', top10);
-    }
-    return res.json(200, game);
-  });
+ }
+ callback(null, game);
 
 };
 

@@ -37,7 +37,7 @@ angular.module('ticTacToeApp')
         },
         getScores: {
           method: 'GET',
-          url: '/api/games/scores/10',
+          url: '/api/users/scores/10',
           isArray: true
         }
       });
