@@ -164,7 +164,7 @@ angular.module('ticTacToeApp')
       }
 
       function getCellByMouseEvent(e) {
-        var rect = e.target.getBoundingClientRect(), px, py, x, y;
+        var rect = canvas.getBoundingClientRect(), px, py, x, y;
         // Pixels position
         px = e.clientX - rect.left;
         py = e.clientY - rect.top;
@@ -494,6 +494,15 @@ angular.module('ticTacToeApp')
 
         $scope.$on('$destroy', function destroy() {
           $window.removeEventListener('resize', onResize);
+          if (renderer !== undefined) {
+            renderer.destroy();
+            renderer = undefined;
+          }
+          if (vm.canvasOptions) {
+            // unref dom element
+            vm.canvasOptions.container = undefined;
+            vm.canvasOptions = undefined;
+          }
         });
 
         function syncBoard() {

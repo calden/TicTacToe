@@ -47,7 +47,7 @@ angular.module('ticTacToeApp')
     };
 
     game.prototype.canTrash = function () {
-      return this.player1 === Auth.getCurrentUser().name || this.stateGame === GameState.OVER;
+      return (this.player1 === Auth.getCurrentUser().name && this.stateGame === GameState.WAITING)|| this.stateGame === GameState.OVER;
     };
 
     return game;
