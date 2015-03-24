@@ -4,11 +4,12 @@ var _ = require('lodash');
 var Game = require('./game.model');
 var ruleServiceGame = require('./game.service');
 
+// handle the 500 reply in case of error.
 function handleError(res, err) {
   return res.send(500, err);
 }
 
-//Load Game and manage 404 reply
+//load the current game and call next middleware or return 404 if not found
 exports.loadGameById = function (req, res, next, id) {
   var query = Game.findById(id);
 
