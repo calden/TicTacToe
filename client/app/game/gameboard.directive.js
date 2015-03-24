@@ -494,6 +494,15 @@ angular.module('ticTacToeApp')
 
         $scope.$on('$destroy', function destroy() {
           $window.removeEventListener('resize', onResize);
+          if (renderer !== undefined) {
+            renderer.destroy();
+            renderer = undefined;
+          }
+          if (vm.canvasOptions) {
+            // unref dom element
+            vm.canvasOptions.container = undefined;
+            vm.canvasOptions = undefined;
+          }
         });
 
         function syncBoard() {
