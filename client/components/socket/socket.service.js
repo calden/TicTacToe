@@ -48,9 +48,7 @@ angular.module('ticTacToeApp')
       manageScores: function (scores) {
         socket.on('game:scores', function (newScores) {
           scores.splice(0, scores.length);
-          newScores.map(function(item){
-            scores.push(item);
-          });
+          Array.prototype.push.apply(scores, newScores);
         });
       },
 

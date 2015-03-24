@@ -26,7 +26,8 @@ exports.loadGameById = function (req, res, next, id) {
 
 // Get list of games
 exports.index = function (req, res) {
-  Game.find(function (err, games) {
+  Game.find().where('stateGame').ne('Over')
+    .exec(function (err, games) {
     if (err) {
       return handleError(res, err);
     }

@@ -506,12 +506,9 @@ angular.module('ticTacToeApp')
         });
 
         function syncBoard() {
-
           var gameState = vm.game.stateBoard;
-
           renderer.forEachCell(
             function (cell) {
-
               var remoteSate;
               switch (gameState.charAt(cell.index)) {
               case signPlayer1:
@@ -521,15 +518,11 @@ angular.module('ticTacToeApp')
                 remoteSate = 2;
                 break;
               }
-
               if (remoteSate !== cell.state) {
                 renderer.setCell(cell.ix, cell.iy, remoteSate);
               }
-
             }
           );
-
-          //updateGameState();
         }
 
         function onResize() {
@@ -552,10 +545,12 @@ angular.module('ticTacToeApp')
           syncBoard();
 
           renderer.onCellRequest(function (cell) {
-
             vm.playturn(cell);
-
           });
+
+          if (vm.message) {
+            renderer.setMessage(vm.message.target, vm.message.message);
+          }
 
         }
       },
