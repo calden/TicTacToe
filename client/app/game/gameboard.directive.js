@@ -164,7 +164,7 @@ angular.module('ticTacToeApp')
       }
 
       function getCellByMouseEvent(e) {
-        var rect = e.target.getBoundingClientRect(), px, py, x, y;
+        var rect = canvas.getBoundingClientRect(), px, py, x, y;
         // Pixels position
         px = e.clientX - rect.left;
         py = e.clientY - rect.top;
