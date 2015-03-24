@@ -115,7 +115,7 @@ angular.module('ticTacToeApp')
               msg = 'Match nul !';
             }
           }
-        } else if (gameData.stateGame === GameState.PENDING) {
+        } else if (gameData.stateGame === GameState.WAITING) {
           msg = 'En attente d\'un adversaire';
         } else if (numberPlayer !== gameData.turnPlayer) {
           msg = 'Attente du coup de votre adversaire !';
