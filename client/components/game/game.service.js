@@ -8,7 +8,7 @@ angular.module('ticTacToeApp')
   .constant('signEmpty', '_')
   .constant('player1', '1')
   .constant('player2', '2')
-  .constant('GameState', { PENDING: 'Pending', OVER: 'Over', WAITING: 'Opened' } )
+  .constant('GameState', { PENDING: 'Pending', OVER: 'Over', WAITING: 'Opened', NOT_OVER: '!Over' })
 
   // Game ressource ajax rest access
   .factory('Game', ['$resource', 'Auth', 'GameState', function ($resource, Auth, GameState) {
@@ -102,7 +102,7 @@ angular.module('ticTacToeApp')
 
       that.getMessage = function () {
         var msg, target = 'center';
-        if (gameData.stateGame === 'Over') {
+        if (gameData.stateGame === GameState.OVER) {
           if (player !== undefined && player.name === gameData.winner) {
             target = 'victory';
             msg = 'Vous avez gagné !';
@@ -115,7 +115,7 @@ angular.module('ticTacToeApp')
               msg = 'Match nul !';
             }
           }
-        } else if (gameData.stateGame === 'Opened') {
+        } else if (gameData.stateGame === GameState.PENDING) {
           msg = 'En attente d\'un adversaire';
         } else if (numberPlayer !== gameData.turnPlayer) {
           msg = 'Attente du coup de votre adversaire !';

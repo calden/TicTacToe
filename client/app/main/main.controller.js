@@ -1,16 +1,20 @@
 'use strict';
 
 angular.module('ticTacToeApp')
-  .controller('MainCtrl', ['$scope', '$state', '$rootScope', 'games', 'scores', 'socket', 'Auth',
-    function ($scope, $state, $rootScope, games, scores, socket, Auth) {
+  .controller('MainCtrl', ['$scope', '$state', '$rootScope', 'games', 'scores', 'socket', 'Auth', 'GameState',
+    function ($scope, $state, $rootScope, games, scores, socket, Auth, GameState) {
+
       var main = this;
+
       socket.manageGames(games);
       socket.manageScores(scores);
 
       main.scores = scores;
       main.games = games;
 
-      main.stateFilter = '!Over';
+      $scope.GameState = GameState;
+
+      main.stateFilter = GameState.NOT_OVER;
 
       main.select = function (game) {
         $state.go('main.gameboard', {idGame: game._id});
@@ -22,7 +26,7 @@ angular.module('ticTacToeApp')
 
       main.join = function (game) {
         game.player2 = Auth.getCurrentUser().name;
-        game.stateGame = 'Pending';
+        game.stateGame = GameState.PENDING;
         game.$update();
         $state.go('main.gameboard', {idGame: game._id});
       };
@@ -33,7 +37,7 @@ angular.module('ticTacToeApp')
 
       main.remove = function (game) {
         var index;
-        if (game.stateGame === 'Over') {
+        if (game.stateGame === GameState.OVER) {
           index = main.games.indexOf(game);
           main.games.splice(index, 1);
         } else {
