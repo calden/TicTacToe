@@ -1,7 +1,7 @@
 'use strict';
 
 var User = require('./user.model');
-var Game = require('../game/game.model');
+var Game = require('../game/game.model').Game;
 var passport = require('passport');
 var config = require('../../config/environment');
 var jwt = require('jsonwebtoken');

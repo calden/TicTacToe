@@ -1,7 +1,8 @@
 'use strict';
 
 var _ = require('lodash');
-var Game = require('./game.model');
+var Game = require('./game.model').Game;
+var GameState = require('./game.model').GameState;
 var ruleServiceGame = require('./game.service');
 
 // handle the 500 reply in case of error.
@@ -27,7 +28,7 @@ exports.loadGameById = function (req, res, next, id) {
 
 // Get list of games
 exports.index = function (req, res) {
-  Game.find().where('stateGame').ne('Over')
+  Game.find().where('stateGame').ne(GameState.OVER)
     .exec(function (err, games) {
     if (err) {
       return handleError(res, err);
