@@ -6,7 +6,7 @@
 'use strict';
 
 var User = require('../api/user/user.model');
-var Game = require('../api/game/game.model');
+var Game = require('../api/game/game.model').Game;
 
 User.find({}).remove(function() {
   User.create({

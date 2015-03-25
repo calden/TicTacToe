@@ -1,21 +1,18 @@
 'use strict';
 
 var _ = require('lodash');
-var Game = require('./game.model');
+var GameModel = require('./game.model');
 
-var signEmpty = '_';
-
-var signPlayer = {'1': 'X', '2': 'O'};
-
-var stateOver = "Over";
-var statePending = "Pending";
+var Game = GameModel.Game;
+var GameState = GameModel.GameState;
+var GameConst = GameModel.GameConst;
 
 /**
  * Fonction permettant de jouer le coup , verifier si il y a un gagnant et de sauver l'etat du jeu
  */
 exports.validateAndplayTurn = function (game, position, userName, callback) {
   // Jeux ouvert
-  if (game.stateGame !== statePending) {
+  if (game.stateGame !== GameState.PENDING) {
     callback("Cette partie n'est pas en cours.");
     return;
   }
@@ -27,20 +24,20 @@ exports.validateAndplayTurn = function (game, position, userName, callback) {
   }
   // La case est libre
   var charAtPosition = game.stateBoard.charAt(position);
-  if (charAtPosition === '' || charAtPosition !== '_') {
-    callback("Impossible de jouer sur cette case.");
+  if (charAtPosition === '' || charAtPosition !== GameConst.signEmpty) {
+    callback("Impossible de jouer sur cette case. " + charAtPosition + " - " + game.stateBoard + " - " + position);
     return;
   }
   // Prise en compte du coup demandé
   var state = game.stateBoard;
   var pos = parseInt(position, 10);
-  game.stateBoard = state.substring(0, pos) + signPlayer[numberPlayer] + state.substring(pos + 1, 9);
-  if (checkWinnerGame(game, signPlayer[numberPlayer])) {
-    game.stateGame = stateOver;
+  game.stateBoard = state.substring(0, pos) + GameConst.signPlayer[numberPlayer] + state.substring(pos + 1, 9);
+  if (checkWinnerGame(game, GameConst.signPlayer[numberPlayer])) {
+    game.stateGame = GameState.OVER;
     game.winner = userName;
   } else {
     if (checkDraw(game)) {
-      game.stateGame = stateOver;
+      game.stateGame = GameState.OVER;
     } else {
       game.turnPlayer = numberPlayer === 1 ? 2 : 1;
     }
@@ -59,7 +56,7 @@ function checkWinnerGame(currentGame, signPlayer) {
 
 function checkDraw(currentGame) {
   return !_.some(currentGame.stateBoard, function (position) {
-    return position === '_';
+    return position === GameConst.signEmpty;
   });
 }
 
@@ -73,8 +70,4 @@ function identifyPlayer(currentGame, name) {
     }
   }
   return numberUser;
-}
-
-function handleError(res, err) {
-  return res.send(500, err);
 }

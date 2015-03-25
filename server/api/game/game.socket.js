@@ -4,7 +4,7 @@
 
 'use strict';
 
-var Game = require('./game.model');
+var Game = require('./game.model').Game;
 
 exports.register = function(socket) {
   Game.on('game:save', function (doc) {
