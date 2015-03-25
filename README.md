@@ -245,7 +245,6 @@ exports.create = function (req, res) {
     if (err) {
       return handleError(res, err);
     }
-    Game.emit('game:create', game);
     return res.json(201, game);
   });
 };
@@ -260,7 +259,6 @@ exports.update = function (req, res) {
     if (err) {
       return handleError(res, err);
     }
-    Game.emit('game:save', game);
     return res.json(200, game);
   });
 };
@@ -271,11 +269,12 @@ exports.destroy = function (req, res) {
     if (err) {
       return handleError(res, err);
     }
-    Game.emit('game:remove', req.game);
     return res.send(204);
   });
 };
 ```
+
+Il est alors possible de refaire des tests pour vérifier que l'on écrit bien dans la base MongoDB.
 
 ## affichage parties en cours
 ## creation partie back
