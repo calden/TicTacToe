@@ -304,9 +304,14 @@ exports.destroy = function (req, res) {
 Il est alors possible de refaire des tests pour vérifier que l'on écrit bien dans la base MongoDB.
 
 ## affichage parties en cours
-## creation partie back
+## creation d'une partie dans le back
+
+Nous allons maintenant voir comment nous pouvons créer une partie dans le backend. L'objet Game etant créer dans le front, nous n'avons rien de plus à faire que ce qui a été fait dans le step de création du model pour Game, qui récupère l'objet Game dans le body de la requete pour le persister.
+
 ## creation partie front
 ## Socket back et front
+
+
 ## joue un coup back
 ## plug directive game sur front
 ## Protractor
