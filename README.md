@@ -311,6 +311,85 @@ Nous allons maintenant voir comment nous pouvons créer une partie dans le backe
 ## creation partie front
 ## Socket back et front
 
+Afin de pouvoir communiquer entre les différents clients, nous allons utiliser des sockets. Elles permettront de pousser vers les clients les créations / fin de parties ainsi que les coups joués par les joueurs.
+
+Le template fourni une gestion de websockets.
+
+Dans le fichier `/server/app.js` il y a une ligne :
+```javascript
+require('./config/socketio')(socketio);
+```
+dans ce fichier `/sever/config/socketio.js` dans la fonction `onConnect` vous ajoutez
+```javascript
+// Insert sockets below
+require('../api/game/game.socket').register(socket);
+```
+Pour permettre de séparer les reponsabilité, nous allons utiliser le système d'événements de NodeJS.
+Les Objet Model ont EventEmitter dans leur chaîne prototypal. Cela leur permet d'émettre des événements.
+
+Dans le code du controller, `/server/api/game/game.controller.js` nous ajoutons l'émission d'événement sur les actions.
+
+```javascript
+// Creates a new game in the DB.
+exports.create = function (req, res) {
+  Game.create(req.body, function (err, game) {
+    if (err) {
+      return handleError(res, err);
+    }
+    Game.emit('game:create', game);
+    return res.json(201, game);
+  });
+};
+
+// Updates an existing game in the DB.
+exports.update = function (req, res) {
+  if (req.body._id) {
+    delete req.body._id;
+  }
+  var updated = _.merge(req.game, req.body);
+  updated.save(function (err, game) {
+    if (err) {
+      return handleError(res, err);
+    }
+    Game.emit('game:save', game);
+    return res.json(200, game);
+  });
+};
+
+// Deletes a game from the DB.
+exports.destroy = function (req, res) {
+  req.game.remove(function (err) {
+    if (err) {
+      return handleError(res, err);
+    }
+    Game.emit('game:remove', req.game);
+    return res.send(204);
+  });
+};
+```
+
+Ensuite vous créez le fichier `/server/api/game/game.socket.js`.
+
+Vous pouvez ajouter le code suivant dedans :
+
+```javascript
+var Game = require('./game.model');
+
+exports.register = function(socket) {
+  Game.on('game:save', function (doc) {
+    socket.emit('game:save', doc);
+  });
+  Game.on('game:remove', function (doc) {
+    socket.emit('game:remove', doc);
+  });
+  Game.on('game:create', function (doc) {
+    socket.emit('game:create', doc);
+  });
+};
+```
+A partir de ce moment, un message est envoyé sur la socket lorsque nous émettons un event.
+
+A noter que nous aurions pu utiliser des Middleware sur le Schema qui propose des "hook" sur les post save et remove mais ceux-ci n'auraient pas permis de faire la différence entre un update et une création.
 
 ## joue un coup back
 ## plug directive game sur front
