@@ -103,6 +103,33 @@ Vous pouvez maintenant tester en utilisant CURL ou un client REST.
 TODO exemple.
 
 
+Comme on ne veux pas tester systématiquement à la main que les services REST sont fonctionnels, nous allons écrire des tests d'intégration. Pour cela nous utilisons `supertest`, une librairie proposant une sorte de DSL permettant d'écrire les tests.
+
+Pour le test de la méthode GET renvoyant la liste des parties, nous obtenons le code suivant :
+
+```javascript
+'use strict';
+
+var should = require('should');
+var app = require('../../app');
+var request = require('supertest');
+
+
+describe('GET /api/games', function() {
+
+  it('should respond with JSON array', function(done) {
+    request(app)
+      .get('/api/games')
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end(function(err, res) {
+        if (err) return done(err);
+        res.body.should.be.instanceof(Array);
+        done();
+      });
+  });
+});
+```
 
 ## model pour Games
 
