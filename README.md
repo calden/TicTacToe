@@ -465,5 +465,37 @@ describe('game management', function(){
 ## plug directive game sur front
 ## Protractor
 
+Protractor est une évolution de Selenium qui est "AngularJS Aware". C'est à du-ire qu'il possède un ensemble de selecteur spécifique aux directives d'Angular (modèle, binding, iteration) et est capable d'attendre la stabilisation de l'application avant d'exécuter la commande suivante.
+  Le générateur a créer pour nous les fichiers de configuration nécessaire avec le fichier `/protractor.conf.js`, la configuration dans le fichier `/Gruntfile.js` ainsi qu'un répertoire `/e2e`pour les tests.
+  Vous créez donc un fichier `/e2e/main/newGame.spec.js`pour écrire un scénario de test sur la création d'une nouvelle partie avec le code suivant : 
+  
+```javascript
+'use strict';
+
+describe('Game View', function() {
+  var partieList;
+
+  beforeEach(function() {
+    browser.get('http://localhost:9000')
+  });
+
+  it('should be able to create a new Game final', function() {
+    var countBefore, countAfter;
+    element(by.linkText('Login')).click();
+    element(by.model('user.email')).sendKeys('test@test.com');
+    element(by.model('user.password')).sendKeys('test');
+    element(by.buttonText('Login')).click();
+    element.all(by.repeater("game in games")).count().then(function(data){
+      countBefore = data;
+      element(by.buttonText('Créer partie')).click();
+      element(by.buttonText("Valider")).click();
+      countAfter = element.all(by.repeater("game in games")).count();
+      expect (countAfter).toBe(countBefore + 1);
+    });
+  });
+});
+```
+Dans ce test, nous commençons par nous loggué dans l'applicattion en tant qu'utilisateur "test", puis nous comptons le nombre de partie en cours. Après cela nous créons une nouvelle partie est comptons de nouveau le nombre de partie en cours et vérifions qu'il y en a une de plus.  
+  
 ## OAuth
 ## Top10
