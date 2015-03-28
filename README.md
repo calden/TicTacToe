@@ -499,3 +499,93 @@ Dans ce test, nous commençons par nous loggué dans l'applicattion en tant qu'u
   
 ## OAuth
 ## Top10
+
+### Modification du coté server
+Pour le top 10, nous allons avoir deux modifications à faire du coté du server : 
+
+ - création d'un service permettant de récupérer le top 10 des joueurs lors du chargement de l'application
+ - l'envoi de mise à jour du TOP 10 lorsqu'un joueur gagne une partie
+ 
+La première chose à faire est la création d'une requête permettant de récupéré le top 10 des joueurs.
+ Pour cela nous utilisons le pipeline aggregate de MongoDB en ajoutant une méthode dans le model Mongoose en modifiant le fichier `/server/api/game/game.model.js`
+ 
+```javascript
+var Game = mongoose.model('Game', GameSchema);
+
+Game.getTop10 = function(callback){
+  Game.aggregate(
+      {$match:{"winner":{$exists:true}}},
+      {$group:{"_id":"$winner", name:{$first:'$winner'}, score:{$sum:1}}},
+      {$sort:{score : -1}},
+      {$limit:10},
+      function(err, summary){
+        callback(err, summary);
+      })
+};
+
+module.exports = Game;
+```
+Comme nous plaçons le nom du joueur gagnant dans la propriété `winner`du l'objet `Game`, cette requête
+
+ - filtre les elements dont la propriété winnner existe
+ - groupe les elements en créant un comptage des elements dans la propriété score
+ - trie en ordre décroissant sur la propriété score
+ - récupère les 10 premiers élément
+ - invoke la fonction passée en callback en donnant l'éventuelle erreur ou le résultat
+ 
+Ensuite nous créons un service pour la récupération du top10.
+  Pour cela on modifie le fichier `/server/api/user/index.js` pour ajouter un mapping : 
+  
+```javascript 
+router.get('/scores/10', controller.scores);
+```
+Dans le fichier `/server/api/user/user.controller.js` nous ajoutons la méthode correspondante : 
+
+```javascript
+var Game = require('../game/game.model');
+//...
+exports.scores = function(req, res) {
+  Game.getTop10(function(err, scores){
+    if(err){ return handleError(res, err); }
+    return res.json(200, scores);})
+};
+```
+
+Enfin nous devons envoyé une mise a jour en cas de victoire d'un joueur, pour cela nous modifions la méthode `validateAndPlayTurn` dans le fichier `/server/api/game/game.controller.js` pour verifier si un gagnant a été positionné sur la partie et alors requetter le top 10 et émettre un événement si nécessaire 
+
+```javascript
+// Validate and play turn
+exports.validateAndPlayTurn = function (req, res) {
+  var position = parseInt(req.params.position);
+  var userName = req.user.name;
+
+  var callback = function (err, game) {
+    if (err) {
+      return res.status(400).json(err);
+    }
+    game.save(function (err) {
+      if (err) {
+        return handleError(res, err);
+      }
+      Game.emit('game:save', game);
+      if (game.winner) {
+        //emit for broadcast of new ranking in the socket
+        Game.getTop10(function (err, scores) {
+          Game.emit('game:endGame', scores);
+        });
+      }
+      return res.json(200, game);
+    });
+  };
+
+  ruleServiceGame.validateAndPlayTurn(req.game, position, userName, callback);
+};
+```
+
+La dernière étape est l'envoi du nouveau classement par la websocket dans le fichier `/server/api/game/game.socket.js` :
+
+```javascript
+  Game.on('game:endGame', function(top10){
+    socket.emit('game:scores', top10);
+  });
+```
