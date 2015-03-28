@@ -389,9 +389,44 @@ exports.register = function(socket) {
 ```
 A partir de ce moment, un message est envoyé sur la socket lorsque nous émettons un event.
 
-A noter que nous aurions pu utiliser des Middleware sur le Schema qui propose des "hook" sur les post save et remove mais ceux-ci n'auraient pas permis de faire la différence entre un update et une création.
+A noter que nous aurions pu utiliser des Middlewares sur le Schema qui propose des "hook" sur les post save et remove mais ceux-ci n'auraient pas permis de faire la différence entre un update et une création.
 
 ## joue un coup back
+
+Pour jouer un coup l'application utilise l'URL `/:id/:position` définie dans le fichier `/server/api/game/index.js`.
+
+Cette route passe possède un paramètre supplémentaire qui permet de rejeter l'accès si l'utilistaeur n'est pas authentifié. Cet appel permet aussi l'ajout de la propriété `user`sur l'objet request.
+A noter que comme l'URL est au format `/:id` les requêtes passeront aussi par le middleware param qui accroche la partie sur l'objet request.
+
+Pour cette fonctionnalité, nous fournissons une librairie qui s'occupe de la validation si le coup est possible et du changement d'état du jeu. La fonction a invoquer prend un callback qui recevra l'éventuelle erreur ou le nouvel état du jeu.
+
+Vous devez ajouter le code suivant dans le controller
+
+```javascript
+var ruleServiceGame = require('./game.service');
+
+
+// Validate and play turn
+exports.validateAndPlayTurn = function (req, res) {
+  var position = parseInt(req.params.position);
+  var userName = req.user.name;
+
+  var callback = function (err, game) {
+    if (err) {
+      return res.status(400).json(err);
+    }
+    game.save(function (err) {
+      if (err) {
+        return handleError(res, err);
+      }
+      Game.emit('game:save', game);
+      return res.json(200, game);
+    });
+  };
+
+  ruleServiceGame.validateAndplayTurn(req.game, position, userName, callback);
+};
+```
 ## plug directive game sur front
 ## Protractor
 ## OAuth
