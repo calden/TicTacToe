@@ -391,7 +391,9 @@ A partir de ce moment, un message est envoyé sur la socket lorsque nous émetto
 
 A noter que nous aurions pu utiliser des Middlewares sur le Schema qui propose des "hook" sur les post save et remove mais ceux-ci n'auraient pas permis de faire la différence entre un update et une création.
 
-## joue un coup back
+## jouer un coup dans le coté serveur
+
+### écriture la fonctionnalité 
 
 Pour jouer un coup l'application utilise l'URL `/:id/:position` définie dans le fichier `/server/api/game/index.js`.
 
@@ -427,7 +429,41 @@ exports.validateAndPlayTurn = function (req, res) {
   ruleServiceGame.validateAndplayTurn(req.game, position, userName, callback);
 };
 ```
+Nous invoquons la méthode `validateAndPlayTurn` en lui donnant le jeu, la position jouée, le nom du joueur et une fonction de callback.
+  Le callback est invoqué avec une erreur si la position est déjà jouée, sinon on nous renvoie le jeu mis à jour. Nous faisons alors une sauvegarde et emettons un évènement pour que l'information soit émise via la websocket.
+  
+### Test unitaire sur la librairie
+
+Nous avions écrit un test d'intégration pour les services REST en utilisant la librairie `supertest`. Pour les tests unitaires, le générateur fourni `mocha` pour l'écriture des tests et `sinon`pour l'écriture des mocks ou spies.
+  Vous pouvez donc créer un fichier `/server/api/game/gameTU.spec.js` dans lequel vous mettez le code suivant : 
+  
+```javascript
+var gameService = require('./game.service.js');
+var sinon = require('sinon');
+
+describe('game management', function(){
+
+  it('should return an error on the callback if position is already played', function(){
+    var spy = sinon.spy()
+
+    var game = {
+      player1 : 'Bob',
+      stateGame : 'Pending',
+      stateBoard:'_____X___',
+      turnPlayer: 1
+    };
+
+    gameService.validateAndplayTurn(game, 5, 'Bob', spy);
+
+    sinon.assert.calledWith(spy, "Impossible de jouer sur cette case.");
+  })
+
+});
+````
+
+  
 ## plug directive game sur front
 ## Protractor
+
 ## OAuth
 ## Top10

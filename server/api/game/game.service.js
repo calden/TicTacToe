@@ -13,7 +13,7 @@ var statePending = "Pending";
 /**
  * Fonction permettant de jouer le coup , verifier si il y a un gagnant et de sauver l'etat du jeu
  */
-exports.validateAndplayTurn = function (game, position, userName, callback) {
+exports.validateAndPlayTurn = function (game, position, userName, callback) {
   // Jeux ouvert
   if (game.stateGame !== statePending) {
     callback("Cette partie n'est pas en cours.");
