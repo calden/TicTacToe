@@ -2,6 +2,19 @@
 
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
+
+var GameState = {
+  OVER: "Over",
+  PENDING: "Pending",
+  OPENED: "Opened"
+};
+
+var GameConst = {
+  signEmpty: '_',
+  signPlayer: {'1': 'X', '2': 'O'}
+};
+GameConst.emptyBoard = new Array(10).join(GameConst.signEmpty);
+
 /**
  * Schema Game
  *
@@ -10,8 +23,8 @@ var mongoose = require('mongoose'),
 var GameSchema = new Schema({
   player1: String,
   player2: String,
-  stateBoard: { type: String, default: "_________" },
-  stateGame: { type: String, default: "Opened" },
+  stateBoard: { type: String, default: GameConst.emptyBoard },
+  stateGame: { type: String, default: GameState.OPENED },
   winner: String,
   turnPlayer: { type: Number, default: 1 }
 });
@@ -29,4 +42,6 @@ Game.getTop10 = function(callback){
       })
 };
 
-module.exports = Game;
+module.exports.Game = Game;
+module.exports.GameState = GameState;
+module.exports.GameConst = GameConst;
