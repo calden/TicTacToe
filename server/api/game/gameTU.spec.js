@@ -18,4 +18,4 @@ describe('game management', function(){
     sinon.assert.calledWith(spy, "Impossible de jouer sur cette case.");
   })
 
-})
+});

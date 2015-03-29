@@ -61,7 +61,7 @@ exports.validateAndPlayTurn = function (req, res) {
     });
   };
 
-  ruleServiceGame.validateAndplayTurn(req.game, position, userName, callback);
+  ruleServiceGame.validateAndPlayTurn(req.game, position, userName, callback);
 };
 
 // Get a single game

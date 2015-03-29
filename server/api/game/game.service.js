@@ -10,7 +10,7 @@ var GameConst = GameModel.GameConst;
 /**
  * Fonction permettant de jouer le coup , verifier si il y a un gagnant et de sauver l'etat du jeu
  */
-exports.validateAndplayTurn = function (game, position, userName, callback) {
+exports.validateAndPlayTurn = function (game, position, userName, callback) {
   // Jeux ouvert
   if (game.stateGame !== GameState.PENDING) {
     callback("Cette partie n'est pas en cours.");
