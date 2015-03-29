@@ -304,11 +304,178 @@ exports.destroy = function (req, res) {
 Il est alors possible de refaire des tests pour vérifier que l'on écrit bien dans la base MongoDB.
 
 ## affichage parties en cours
+
+La partie front a été généré dans le repertoire `client`. La navigation dans angularJs va être géré par `ui-router`. Le fichier `client/index.html` est le fichier principal de la partie cliente qui intégrera le state principal.
+
+Nous allons intégrer l'affichage de la liste des parties dans le state Main de notre page principale càd dans le template `/client/app/main/main.html` .
+
+Pour chaque partie, nous allons affcher les noms des joueurs. A partir de chaque élément de la liste, nous allons pouvoir rejoindre en tant que joueur une partie ou accéder à la visualisation de la partie.
+
+Le main.html va être séparé en deux sections aux responsabilités suivantes : 
+  -  une section gérant l'affichage de la liste des parties en cours.
+  -  une autre associée à un sous-état de `main` (utilisation de la directive `ui-view`) :  permettant l'affichage de la directive `Gameboard` ou  du formulaire de création de partie.
+
+Nous nous concentrons pour le moment sur la récupération des données `games` coté client.
+
+Nous créons un service angularjs `Game` qui va récupérer les données avec NgResource.  
+
+```javascript
+.factory('Game', ['$resource', function ($resource) {
+    var game;
+    game = $resource(
+      '/api/games/:id',
+      {
+        id: '@_id'
+      },
+      {
+        update: {
+          method: 'PUT'
+        },
+        get: {
+          method: 'GET'
+        },
+        getAll: {
+          method: 'GET',
+          isArray: true
+        }
+      });
+```
+
+Nous utilsons la méthode 'getAll' pour récupérer tous les jeux disponibles.
+Afin de gérer les problématiques d'asynchronisation, nous allons appeler ce service au sein d'un attribut resolve du state `main` puisque resolve attend la résolution d'éventuelle Promise.
+
+voici le fichier `main/main.js` :
+
+```javascript
+angular.module('ticTacToeApp')
+  .config(function ($stateProvider) {
+   $stateProvider.state('main', {
+        url: '/',
+        templateUrl: 'app/main/main.html',
+          resolve: {
+          games: function (Game) {
+              return Game.getAll().$promise;
+            }
+        },
+        controller: 'MainCtrl as main'
+      });
+
+  });
+```
+
+Nous devons maintenant connecté nos données venant du back vers notre vue. Dans le controller `MainCtrl`, il faut effectuer le cablage et donner l'accès de notre liste de jeux à la vue. Les attributs venant de `resolve` peuvent être injectés dans le controller. C'est ce que nous faisons içi.
+
+```javascript
+angular.module('ticTacToeApp')
+  .controller('MainCtrl', ['$scope', 'games', function ($scope, games) {
+
+      var main = this;
+      main.games = games;
+ 
+    }]);
+
+```
+
+Nous modifions la vue afin d'afficher notre liste de jeux. On utilise ici un `ng-repeat` .  
+
+```html
+<div class="panel-body">
+   <div class="list-group" ng-repeat="game in main.games | filter: {stateGame: main.stateFilter}">
+      <div class="list-group-item" ng-click="main.select(game)" ng-class="{ active: game._id == currentGameId }">
+      <!-- Game label -->
+      <div>
+          <span>{{game.player1}} vs {{game.player2}}</span>
+      </div>
+         
+      </div>
+    </div>
+</div>
+
+```
+
+
 ## creation d'une partie dans le back
 
 Nous allons maintenant voir comment nous pouvons créer une partie dans le backend. L'objet Game etant créer dans le front, nous n'avons rien de plus à faire que ce qui a été fait dans le step de création du model pour Game, qui récupère l'objet Game dans le body de la requete pour le persister.
 
 ## creation partie front
+
+Nous allons ici donner la possibilité à l'utilisateur connecté de créer une nouvelle partie. 
+
+Nous allons donc ajouter un sous état à l'état parent `main` : `main.creategame` dans `main/main.js`.
+
+```javascript
+ 
+ .state('main.creategame', {
+        url: 'creategame',
+        templateUrl: 'app/main/creategame.html'
+      });
+
+```
+
+le fichier `app/main/creategame.html` fait directement référence à une directive qui va implémenter la création d'une nouvelle partie.
+
+La directive est défini dans le repertoire `form` dans le fichier `newgame.directive.js`.
+
+```javascript
+angular.module('ticTacToeApp')
+  .controller('controllerNewGame', [
+    '$scope',
+    '$state',
+    '$timeout',
+    'Auth',
+    'Game',
+    function ($scope, $state, $timeout, Auth, Game) {
+
+      $scope.userConnected = angular.isDefined(Auth.getCurrentUser().name);
+
+      $scope.gameCreated = false;
+
+      $scope.gameCreatedId = undefined;
+
+      $scope.model = { firstPlayer: true };
+
+      $scope.newGame = {
+        turnPlayer: 1,
+        player1: Auth.getCurrentUser().name,
+        player2: ''
+      };
+
+      $scope.validateNewGame = function () {
+        //$scope.newGame.turnPlayer = $scope.model.firstPlayer ? 1 : 2;
+        $scope.newGame = Game.save($scope.newGame)
+          .$promise.then(function (createdGame) {
+            $scope.gameCreatedId = createdGame._id;
+            // Wait game list update before display board
+            $timeout(
+              function () {
+                $state.go('main.gameboard', {idGame: $scope.gameCreatedId});
+              },
+              50
+            );
+          });
+        //$scope.gameCreated = true;
+      };
+
+      $scope.display = function () {
+        $state.go('main.gameboard', {idGame: $scope.newGame._id});
+      };
+
+    }])
+  .directive('newGame', [function () {
+    return {
+      restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
+      scope: {},
+      controller: 'controllerNewGame',
+      templateUrl: 'app/form/newgame.template.html',
+      replace: true,
+      link: function (/*$scope, iElm, iAttrs, controller*/) {}
+    };
+  }]);
+```
+
+Il restera à implemeter le sous état `main.gameboard` dans lequelle on affichera leplateau de jeu.
+
 ## Socket back et front
 
 Afin de pouvoir communiquer entre les différents clients, nous allons utiliser des sockets. Elles permettront de pousser vers les clients les créations / fin de parties ainsi que les coups joués par les joueurs.
@@ -324,7 +491,7 @@ dans ce fichier `/sever/config/socketio.js` dans la fonction `onConnect` vous aj
 // Insert sockets below
 require('../api/game/game.socket').register(socket);
 ```
-Pour permettre de séparer les reponsabilité, nous allons utiliser le système d'événements de NodeJS.
+Pour permettre de séparer les reponsabilités, nous allons utiliser le système d'événements de NodeJS.
 Les Objet Model ont EventEmitter dans leur chaîne prototypal. Cela leur permet d'émettre des événements.
 
 Dans le code du controller, `/server/api/game/game.controller.js` nous ajoutons l'émission d'événement sur les actions.
@@ -390,6 +557,9 @@ exports.register = function(socket) {
 A partir de ce moment, un message est envoyé sur la socket lorsque nous émettons un event.
 
 A noter que nous aurions pu utiliser des Middlewares sur le Schema qui propose des "hook" sur les post save et remove mais ceux-ci n'auraient pas permis de faire la différence entre un update et une création.
+### Socket coté Front
+
+@TODO
 
 ## jouer un coup dans le coté serveur
 
@@ -461,8 +631,18 @@ describe('game management', function(){
 });
 ````
 
-  
-## plug directive game sur front
+
+## Intégration de la directive du gameboard
+
+Nous créons un sous state particulier afin d'afficher le plateau de jeu. c'est dans ce sous état que nous intégrons la directive du `gameboard`. 
+
+Dans ce sous état, nous allons afficher les joueurs du jeu en cours et la directive.
+
+Le but est ici de fournir les données nécessaires à la directive.
+
+@TODO
+
+
 ## Protractor
 
 Protractor est une évolution de Selenium qui est "AngularJS Aware". C'est à du-ire qu'il possède un ensemble de selecteur spécifique aux directives d'Angular (modèle, binding, iteration) et est capable d'attendre la stabilisation de l'application avant d'exécuter la commande suivante.
@@ -498,6 +678,7 @@ describe('Game View', function() {
 Dans ce test, nous commençons par nous loggué dans l'applicattion en tant qu'utilisateur "test", puis nous comptons le nombre de partie en cours. Après cela nous créons une nouvelle partie est comptons de nouveau le nombre de partie en cours et vérifions qu'il y en a une de plus.  
   
 ## OAuth
+@TODO
 ## Top10
 
 ### Modification du coté server
