@@ -563,7 +563,7 @@ A noter que nous aurions pu utiliser des Middlewares sur le Schema qui propose d
 
 ## jouer un coup dans le coté serveur
 
-### écriture la fonctionnalité 
+### écriture la fonctionnalité
 
 Pour jouer un coup l'application utilise l'URL `/:id/:position` définie dans le fichier `/server/api/game/index.js`.
 
@@ -601,12 +601,12 @@ exports.validateAndPlayTurn = function (req, res) {
 ```
 Nous invoquons la méthode `validateAndPlayTurn` en lui donnant le jeu, la position jouée, le nom du joueur et une fonction de callback.
   Le callback est invoqué avec une erreur si la position est déjà jouée, sinon on nous renvoie le jeu mis à jour. Nous faisons alors une sauvegarde et emettons un évènement pour que l'information soit émise via la websocket.
-  
+
 ### Test unitaire sur la librairie
 
 Nous avions écrit un test d'intégration pour les services REST en utilisant la librairie `supertest`. Pour les tests unitaires, le générateur fourni `mocha` pour l'écriture des tests et `sinon`pour l'écriture des mocks ou spies.
-  Vous pouvez donc créer un fichier `/server/api/game/gameTU.spec.js` dans lequel vous mettez le code suivant : 
-  
+  Vous pouvez donc créer un fichier `/server/api/game/gameTU.spec.js` dans lequel vous mettez le code suivant :
+
 ```javascript
 var gameService = require('./game.service.js');
 var sinon = require('sinon');
@@ -629,7 +629,7 @@ describe('game management', function(){
   })
 
 });
-````
+```
 
 
 ## Intégration de la directive du gameboard
@@ -645,10 +645,10 @@ Le but est ici de fournir les données nécessaires à la directive.
 
 ## Protractor
 
-Protractor est une évolution de Selenium qui est "AngularJS Aware". C'est à du-ire qu'il possède un ensemble de selecteur spécifique aux directives d'Angular (modèle, binding, iteration) et est capable d'attendre la stabilisation de l'application avant d'exécuter la commande suivante.
+Protractor est une évolution de Selenium qui est "AngularJS Aware". C'est à dire qu'il possède un ensemble de selecteur spécifique aux directives d'Angular (modèle, binding, iteration) et est capable d'attendre la stabilisation de l'application avant d'exécuter la commande suivante.
   Le générateur a créer pour nous les fichiers de configuration nécessaire avec le fichier `/protractor.conf.js`, la configuration dans le fichier `/Gruntfile.js` ainsi qu'un répertoire `/e2e`pour les tests.
-  Vous créez donc un fichier `/e2e/main/newGame.spec.js`pour écrire un scénario de test sur la création d'une nouvelle partie avec le code suivant : 
-  
+  Vous créez donc un fichier `/e2e/main/newGame.spec.js`pour écrire un scénario de test sur la création d'une nouvelle partie avec le code suivant :
+
 ```javascript
 'use strict';
 
@@ -676,20 +676,20 @@ describe('Game View', function() {
 });
 ```
 Dans ce test, nous commençons par nous loggué dans l'applicattion en tant qu'utilisateur "test", puis nous comptons le nombre de partie en cours. Après cela nous créons une nouvelle partie est comptons de nouveau le nombre de partie en cours et vérifions qu'il y en a une de plus.  
-  
+
 ## OAuth
 @TODO
 ## Top10
 
 ### Modification du coté server
-Pour le top 10, nous allons avoir deux modifications à faire du coté du server : 
+Pour le top 10, nous allons avoir deux modifications à faire du coté du server :
 
  - création d'un service permettant de récupérer le top 10 des joueurs lors du chargement de l'application
  - l'envoi de mise à jour du TOP 10 lorsqu'un joueur gagne une partie
- 
+
 La première chose à faire est la création d'une requête permettant de récupéré le top 10 des joueurs.
  Pour cela nous utilisons le pipeline aggregate de MongoDB en ajoutant une méthode dans le model Mongoose en modifiant le fichier `/server/api/game/game.model.js`
- 
+
 ```javascript
 var Game = mongoose.model('Game', GameSchema);
 
@@ -713,14 +713,14 @@ Comme nous plaçons le nom du joueur gagnant dans la propriété `winner`du l'ob
  - trie en ordre décroissant sur la propriété score
  - récupère les 10 premiers élément
  - invoke la fonction passée en callback en donnant l'éventuelle erreur ou le résultat
- 
+
 Ensuite nous créons un service pour la récupération du top10.
-  Pour cela on modifie le fichier `/server/api/user/index.js` pour ajouter un mapping : 
-  
-```javascript 
+  Pour cela on modifie le fichier `/server/api/user/index.js` pour ajouter un mapping :
+
+```javascript
 router.get('/scores/10', controller.scores);
 ```
-Dans le fichier `/server/api/user/user.controller.js` nous ajoutons la méthode correspondante : 
+Dans le fichier `/server/api/user/user.controller.js` nous ajoutons la méthode correspondante :
 
 ```javascript
 var Game = require('../game/game.model');
@@ -732,7 +732,7 @@ exports.scores = function(req, res) {
 };
 ```
 
-Enfin nous devons envoyé une mise a jour en cas de victoire d'un joueur, pour cela nous modifions la méthode `validateAndPlayTurn` dans le fichier `/server/api/game/game.controller.js` pour verifier si un gagnant a été positionné sur la partie et alors requetter le top 10 et émettre un événement si nécessaire 
+Enfin nous devons envoyé une mise a jour en cas de victoire d'un joueur, pour cela nous modifions la méthode `validateAndPlayTurn` dans le fichier `/server/api/game/game.controller.js` pour verifier si un gagnant a été positionné sur la partie et alors requetter le top 10 et émettre un événement si nécessaire
 
 ```javascript
 // Validate and play turn
