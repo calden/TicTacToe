@@ -13,9 +13,9 @@ describe('game management', function(){
       turnPlayer: 1
     };
 
-    gameService.validateAndplayTurn(game, 5, 'Bob', spy);
+    gameService.validateAndPlayTurn(game, 5, 'Bob', spy);
 
-    sinon.assert.calledWith(spy, "Impossible de jouer sur cette case.");
+    sinon.assert.calledWith(spy, "Impossible de jouer sur cette case. X - _____X___ - 5");
   })
 
 });
