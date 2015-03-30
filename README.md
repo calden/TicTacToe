@@ -557,9 +557,62 @@ exports.register = function(socket) {
 A partir de ce moment, un message est envoyé sur la socket lorsque nous émettons un event.
 
 A noter que nous aurions pu utiliser des Middlewares sur le Schema qui propose des "hook" sur les post save et remove mais ceux-ci n'auraient pas permis de faire la différence entre un update et une création.
+
 ### Socket coté Front
 
-@TODO
+Une fois les events émis coté serveur, il faut désormais les traiter coté client.
+
+Coté client, notre stack utilise une librairie "angularifiée" de `socket.io` .
+
+Nous créons une factory qui va permettre d'initialiser une connection client socket.io et brancher nos différents messages venant du serveur.
+
+```javascript
+.factory('socket', ['socketFactory', 'Game', '$rootScope',
+    function (socketFactory, Game, $rootScope) {
+
+    var ioSocket = io('', {
+      path: '/socket.io-client'
+    });
+
+    var socket = socketFactory({
+      ioSocket: ioSocket
+    });
+
+    return {
+
+      socket: socket,
+
+      manageGames: function (games) {
+        socket.on('game:save', function (game) {
+          var gameToUpdate = _.find(games, {_id: game._id});
+          gameToUpdate.stateBoard = game.stateBoard;
+          gameToUpdate.stateGame = game.stateGame;
+          gameToUpdate.turnPlayer = game.turnPlayer;
+          gameToUpdate.player1 = game.player1;
+          gameToUpdate.player2 = game.player2;
+          gameToUpdate.winner = game.winner;
+          // Notify game update
+          $rootScope.$broadcast('game:remoteUpdate', gameToUpdate);
+        });
+        socket.on('game:remove', function (game) {
+          _.remove(games, {_id: game._id});
+          if ($rootScope.currentGameId === game._id) {
+            $rootScope.currentGameId = undefined;
+          }
+        });
+        socket.on('game:create', function (game) {
+          games.push(new Game(game));
+        });
+      })
+    };
+```
+
+Sur l'événement 'game:save', nous cherchons le jeu modifié dans la liste des jeux puis nous appliquons les modifications à cet instance de jeu puis nous effectuons un broadcast sur le $rootscope pour avertir de la modification coté client.
+
+Sur l'événement 'game:remove', nous supprimons le jeu reçu du serveur de la liste des jeux.
+
+Sur l'événement 'game:create', nous créons une nouvelle ressource Game à partir du jeu reçu du serveur et l'ajoutons à la liste des jeux.
+
 
 ## jouer un coup dans le coté serveur
 
@@ -635,9 +688,7 @@ describe('game management', function(){
 ## Intégration de la directive du gameboard
 
 Nous créons un sous state particulier afin d'afficher le plateau de jeu. c'est dans ce sous état que nous intégrons la directive du `gameboard`. 
-
 Dans ce sous état, nous allons afficher les joueurs du jeu en cours et la directive.
-
 Le but est ici de fournir les données nécessaires à la directive.
 
 @TODO
@@ -678,7 +729,13 @@ describe('Game View', function() {
 Dans ce test, nous commençons par nous loggué dans l'applicattion en tant qu'utilisateur "test", puis nous comptons le nombre de partie en cours. Après cela nous créons une nouvelle partie est comptons de nouveau le nombre de partie en cours et vérifions qu'il y en a une de plus.  
   
 ## OAuth
-@TODO
+ 
+Nous allons mettre en place l'authentification OAuth 2.0 via google.
+Pour cela, il faut générer les clés via la console developpeur de google.
+
+@TODO ajout de la conf et partie Password coté Node.js
+
+
 ## Top10
 
 ### Modification du coté server
