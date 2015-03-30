@@ -1,19 +1,14 @@
 
 
 ## Intro Yeoman
-Utilisation d'une variante du code obtenu par le générateur Angular Fullstack disponible dans Yeoman.
+Pour cet exercice nous allons utiliser une variante du code obtenu par le générateur Angular Fullstack disponible dans Yeoman.
 
-cf slides pour
-TODO
 
- * Yeoman et le concept de module  
- * Les modules Node et require
- * Express et le Router
+## creation du controller REST pour game
+Nous allons exposer via un service REST des ressources `game` qui représenteront les parties.
+Pour cela nous commençons par créer un nouveau module avec un répertoire `/server/api/game`
 
-## creation controller REST pour games
-Création d'un nouveau module avec un répertoire `/server/api/game`
-
-Créer un fichier `game.controller.js` qui sera le controller
+Puis nous créeons un fichier `game.controller.js` qui sera le controller
 
 ```javascript
 // handle the 500 reply in case of error.
@@ -43,12 +38,12 @@ exports.show = function(req, res){
   return res.json(req.game);
 };
 
-// Creates a new game in the DB.
+// Create a new game in the DB.
 exports.create = function (req, res) {
   return res.json(201, {id:'new ID', name:'just created'});
 };
 
-// Updates an existing game in the DB.
+// Update an existing game in the DB.
 exports.update = function (req, res) {
   req.game.name = "just updated";
   return res.json(200, req.game);
@@ -62,7 +57,7 @@ exports.validateAndPlayTurn = function (req, res) {
   return res.json(200, req.game);
 };
 
-// Deletes a game from the DB.
+// Delete a game from the DB.
 exports.destroy = function (req, res) {
   if(!req.game) handleError(res, 'no passed by loadGameById');
   return res.send(204);
@@ -89,9 +84,14 @@ router.delete('/:id', controller.destroy);
 
 module.exports = router;
 ```
-L'utilisation de auth permet de s'assurer que l'utilisateur est loggué et positionne ses informations dans la propriété `req.user`.
 
-Il reste à indiquer à Express qu'il faut utiliser ces mapping pour les urls en `api/games/`. Dans le fichier `/server/routes.js` vous ajoutez :
+La syntaxe `router.param(paramName, aFunction)` permet de dire que lorsque l'on utilisera une route contenant un paramètre `paramName`, il faudra passer par le middleware correspondant à la fonction.
+Celui ci recevra en plus des objet requête et réponse, une fonction `next` et le paramètre. Vous pourrez alors décider de rendre immédiatement la réponse ou passer la main au middleware suivant en invoquant la fonction `next`
+
+L'utilisation de `auth` permet de s'assurer que l'utilisateur est loggué et positionne ses informations dans la propriété `req.user`. 
+Ce service est fourni par le générateur et utilise la librairie Passport.
+
+Il reste à indiquer à Express qu'il faut utiliser ces mappings pour les urls en `api/games/`. Dans le fichier `/server/routes.js` vous ajoutez :
 
 ```javascript
 app.use('/api/games', require('./api/game'));
@@ -100,10 +100,7 @@ A noter que Express retire `/api/games/` de l'URL avant de passer le chemin au R
 
 Vous pouvez maintenant tester en utilisant CURL ou un client REST.
 
-TODO exemple.
-
-
-Comme on ne veux pas tester systématiquement à la main que les services REST sont fonctionnels, nous allons écrire des tests d'intégration. Pour cela nous utilisons `supertest`, une librairie proposant une sorte de DSL permettant d'écrire les tests.
+Comme on ne veux pas tester systématiquement à la main que les services REST sont fonctionnels, nous allons écrire des tests d'intégration. Pour cela nous utilisons `supertest`, une librairie proposant un DSL permettant d'écrire les tests.
 
 Pour le test de la méthode GET renvoyant la liste des parties, nous obtenons le code suivant :
 
@@ -130,12 +127,13 @@ describe('GET /api/games', function() {
   });
 });
 ```
+Nous utilisons aussi la bibliothèque `should` qui permet d'écrire des assertions de façon plus naturelle.
 
-## model pour Games
+## Persistence des parties
 
 Pour l'accès à la base de données, nous utilisons Mongoose qui permet de simplifier l'interaction avec MongoDB.
 
-Mongoose permet de définir un mapping avec la fonction constructeur Schema que vous associerez à une collection dans MongoDB. Il est possible d'ajouter des fonctions pour des requêtes particulières dans le modèle ainsi obtenu.
+Mongoose permet de définir un mapping avec la fonction constructeur `Schema` que vous associerez à une collection dans MongoDB. Il est possible d'ajouter des fonctions pour des requêtes particulières dans le modèle ainsi obtenu.
 
 Créez un fichier `/server/api/game/game.model.js`
 
@@ -183,8 +181,9 @@ Le fichier d'initialisation de la base est `/server/config/seed.js` et contient 
 
 On modifie ce fichier pour permettre la création de quelques jeux :
 ```javascript
+// ...
 var Game = require('../api/game/game.model');
-
+// ...
 Game.find({}).remove(function() {
   Game.create({
   	player1 : "Test",
@@ -223,7 +222,7 @@ Game.find({}).remove(function() {
 ```
 On peut ensuite modifier le code du controller pour remplacer nos méthodes bouchonnées par des vrais appels à MongoDB.
 
-Les méthodes des modèles sont asynchrones et prennent en paramètres des callback qui recevront en argument une erreur en premier paramètre et le résultat de la requête en second paramètre.
+Les méthodes des modèles sont asynchrones et prennent en paramètres des fonctions callback qui recevront en argument une erreur en premier paramètre et le résultat de la requête en second paramètre.
 
 ```javascript
 // Get list of games
@@ -237,8 +236,6 @@ exports.index = function (req, res) {
 };
 ```
 Vous pouvez alors retester votre service et vérifié que vous recevez bien la liste des parties que vous avez initialisé dans le fichier `/server/config/seed.js`
-
-TODO remettre la requête
 
 Vous pouvez alors faire la suite des modifications :
 
@@ -303,13 +300,13 @@ exports.destroy = function (req, res) {
 
 Il est alors possible de refaire des tests pour vérifier que l'on écrit bien dans la base MongoDB.
 
-## affichage parties en cours
+## Affichage des parties en cours
 
-La partie front a été généré dans le repertoire `client`. La navigation dans angularJs va être géré par `ui-router`. Le fichier `client/index.html` est le fichier principal de la partie cliente qui intégrera le state principal.
+La partie front a été généré dans le repertoire `client`. La navigation dans angularJs va être gérée par `ui-router`. Le fichier `client/index.html` est le fichier principal de la partie cliente qui intégrera le state principal.
 
-Nous allons intégrer l'affichage de la liste des parties dans le state Main de notre page principale càd dans le template `/client/app/main/main.html` .
+Nous allons intégrer l'affichage de la liste des parties dans le state Main de notre page principale c'est à dire dans le template `/client/app/main/main.html` .
 
-Pour chaque partie, nous allons affcher les noms des joueurs. A partir de chaque élément de la liste, nous allons pouvoir rejoindre en tant que joueur une partie ou accéder à la visualisation de la partie.
+Pour chaque partie, nous allons afficher les noms des joueurs. A partir de chaque élément de la liste, nous allons pouvoir rejoindre en tant que joueur une partie ou accéder à la visualisation de la partie.
 
 Le main.html va être séparé en deux sections aux responsabilités suivantes : 
   -  une section gérant l'affichage de la liste des parties en cours.
@@ -342,7 +339,7 @@ Nous créons un service angularjs `Game` qui va récupérer les données avec Ng
 ```
 
 Nous utilsons la méthode 'getAll' pour récupérer tous les jeux disponibles.
-Afin de gérer les problématiques d'asynchronisation, nous allons appeler ce service au sein d'un attribut resolve du state `main` puisque resolve attend la résolution d'éventuelle Promise.
+Afin de gérer les problématiques d'asynchronisme, nous allons appeler ce service au sein d'un attribut resolve du state `main` puisque resolve attend la résolution d'éventuelle Promise.
 
 voici le fichier `main/main.js` :
 
@@ -363,7 +360,7 @@ angular.module('ticTacToeApp')
   });
 ```
 
-Nous devons maintenant connecté nos données venant du back vers notre vue. Dans le controller `MainCtrl`, il faut effectuer le cablage et donner l'accès de notre liste de jeux à la vue. Les attributs venant de `resolve` peuvent être injectés dans le controller. C'est ce que nous faisons içi.
+Nous devons maintenant connecter nos données venant du back vers notre vue. Dans le controller `MainCtrl`, il faut effectuer le cablage et donner l'accès de notre liste de jeux à la vue. Les attributs venant de `resolve` peuvent être injectés dans le controller. C'est ce que nous faisons içi.
 
 ```javascript
 angular.module('ticTacToeApp')
@@ -393,12 +390,15 @@ Nous modifions la vue afin d'afficher notre liste de jeux. On utilise ici un `ng
 
 ```
 
-
 ## creation d'une partie dans le back
 
-Nous allons maintenant voir comment nous pouvons créer une partie dans le backend. L'objet Game etant créer dans le front, nous n'avons rien de plus à faire que ce qui a été fait dans le step de création du model pour Game, qui récupère l'objet Game dans le body de la requete pour le persister.
+Nous allons maintenant voir comment nous pouvons créer une partie dans le backend. 
 
-## creation partie front
+L'objet Game étant créé dans le front, nous n'avons rien de plus à faire que ce qui a été fait dans le step de création du model pour Game, qui récupère l'objet Game dans le body de la requête pour le persister.
+
+La méthode `Game.create` fera une correspondance entre les propriétés de l'objet passé dans le body de la requête et celle déclarées dans le mapping.
+
+## creation d'une partie dans le front
 
 Nous allons ici donner la possibilité à l'utilisateur connecté de créer une nouvelle partie. 
 
@@ -474,25 +474,29 @@ angular.module('ticTacToeApp')
   }]);
 ```
 
-Il restera à implemeter le sous état `main.gameboard` dans lequelle on affichera leplateau de jeu.
+Il restera à implemeter le sous état `main.gameboard` dans lequelle on affichera le plateau de jeu.
 
-## Socket back et front
+## Communication via les websockets
 
-Afin de pouvoir communiquer entre les différents clients, nous allons utiliser des sockets. Elles permettront de pousser vers les clients les créations / fin de parties ainsi que les coups joués par les joueurs.
+### Dans le back end
+
+Afin de pouvoir communiquer entre les différents clients, nous allons utiliser des sockets. Elles permettront de pousser vers les clients les créations / fins de parties ainsi que les coups joués par les joueurs.
 
 Le template fourni une gestion de websockets.
 
-Dans le fichier `/server/app.js` il y a une ligne :
+Dans le fichier `/server/app.js` il y a une ligne qui fait l'import de la configuration des websockets :
+
 ```javascript
 require('./config/socketio')(socketio);
 ```
-dans ce fichier `/sever/config/socketio.js` dans la fonction `onConnect` vous ajoutez
+dans ce fichier `/sever/config/socketio.js` dans la fonction `onConnect` vous ajoutez le chargement de la configuration pour notre socket
+
 ```javascript
 // Insert sockets below
 require('../api/game/game.socket').register(socket);
 ```
 Pour permettre de séparer les reponsabilités, nous allons utiliser le système d'événements de NodeJS.
-Les Objet Model ont EventEmitter dans leur chaîne prototypal. Cela leur permet d'émettre des événements.
+Les objets `Model` ont `EventEmitter` dans leur chaîne prototypale. Cela leur permet d'émettre des événements.
 
 Dans le code du controller, `/server/api/game/game.controller.js` nous ajoutons l'émission d'événement sur les actions.
 
@@ -535,9 +539,7 @@ exports.destroy = function (req, res) {
 };
 ```
 
-Ensuite vous créez le fichier `/server/api/game/game.socket.js`.
-
-Vous pouvez ajouter le code suivant dedans :
+Ensuite vous créez le fichier `/server/api/game/game.socket.js` et vous ajouter le code suivant dedans :
 
 ```javascript
 var Game = require('./game.model');
@@ -556,8 +558,9 @@ exports.register = function(socket) {
 ```
 A partir de ce moment, un message est envoyé sur la socket lorsque nous émettons un event.
 
-A noter que nous aurions pu utiliser des Middlewares sur le Schema qui propose des "hook" sur les post save et remove mais ceux-ci n'auraient pas permis de faire la différence entre un update et une création.
-### Socket coté Front
+A noter que nous aurions pu utiliser les "hooks" que propose Schema sur les post save et remove mais ceux-ci n'auraient pas permis de faire la différence entre un update et une création.
+
+### Dans le front end
 
 @TODO
 
@@ -565,12 +568,12 @@ A noter que nous aurions pu utiliser des Middlewares sur le Schema qui propose d
 
 ### écriture la fonctionnalité
 
-Pour jouer un coup l'application utilise l'URL `/:id/:position` définie dans le fichier `/server/api/game/index.js`.
+Pour jouer un coup l'application utilise l'URL `/api/game/:id/:position` définie dans le fichier `/server/api/game/index.js`.
 
-Cette route passe possède un paramètre supplémentaire qui permet de rejeter l'accès si l'utilistaeur n'est pas authentifié. Cet appel permet aussi l'ajout de la propriété `user`sur l'objet request.
+Cette route passe possède un paramètre supplémentaire qui permet de rejeter l'accès si l'utilisateur n'est pas authentifié. Cet appel permet aussi l'ajout de la propriété `user`sur l'objet request.
 A noter que comme l'URL est au format `/:id` les requêtes passeront aussi par le middleware param qui accroche la partie sur l'objet request.
 
-Pour cette fonctionnalité, nous fournissons une librairie qui s'occupe de la validation si le coup est possible et du changement d'état du jeu. La fonction a invoquer prend un callback qui recevra l'éventuelle erreur ou le nouvel état du jeu.
+Pour cette fonctionnalité, nous fournissons une librairie qui s'occupe de la validation si le coup est possible et du changement d'état du jeu. La fonction à invoquer prend un callback qui recevra l'éventuelle erreur ou le nouvel état du jeu.
 
 Vous devez ajouter le code suivant dans le controller
 
@@ -605,7 +608,7 @@ Nous invoquons la méthode `validateAndPlayTurn` en lui donnant le jeu, la posit
 ### Test unitaire sur la librairie
 
 Nous avions écrit un test d'intégration pour les services REST en utilisant la librairie `supertest`. Pour les tests unitaires, le générateur fourni `mocha` pour l'écriture des tests et `sinon`pour l'écriture des mocks ou spies.
-  Vous pouvez donc créer un fichier `/server/api/game/gameTU.spec.js` dans lequel vous mettez le code suivant :
+  Vous pouvez donc créer un fichier `/server/api/game/gameTU.spec.js` dans lequel vous mettez le code suivant permettant de vérifier que la bibliothèque renvoie une erreur si le coup n'est pas jouable :
 
 ```javascript
 var gameService = require('./game.service.js');
@@ -623,7 +626,7 @@ describe('game management', function(){
       turnPlayer: 1
     };
 
-    gameService.validateAndplayTurn(game, 5, 'Bob', spy);
+    gameService.validateAndPlayTurn(game, 5, 'Bob', spy);
 
     sinon.assert.calledWith(spy, "Impossible de jouer sur cette case.");
   })
@@ -646,7 +649,7 @@ Le but est ici de fournir les données nécessaires à la directive.
 ## Protractor
 
 Protractor est une évolution de Selenium qui est "AngularJS Aware". C'est à dire qu'il possède un ensemble de selecteur spécifique aux directives d'Angular (modèle, binding, iteration) et est capable d'attendre la stabilisation de l'application avant d'exécuter la commande suivante.
-  Le générateur a créer pour nous les fichiers de configuration nécessaire avec le fichier `/protractor.conf.js`, la configuration dans le fichier `/Gruntfile.js` ainsi qu'un répertoire `/e2e`pour les tests.
+  Le générateur a créé pour nous les fichiers de configuration nécessaires avec le fichier `/protractor.conf.js`, la configuration dans le fichier `/Gruntfile.js` ainsi qu'un répertoire `/e2e`pour les tests.
   Vous créez donc un fichier `/e2e/main/newGame.spec.js`pour écrire un scénario de test sur la création d'une nouvelle partie avec le code suivant :
 
 ```javascript
@@ -675,20 +678,20 @@ describe('Game View', function() {
   });
 });
 ```
-Dans ce test, nous commençons par nous loggué dans l'applicattion en tant qu'utilisateur "test", puis nous comptons le nombre de partie en cours. Après cela nous créons une nouvelle partie est comptons de nouveau le nombre de partie en cours et vérifions qu'il y en a une de plus.  
+Dans ce test, nous commençons par nous logguer dans l'application en tant qu'utilisateur "test", puis nous comptons le nombre de partie en cours. Après cela nous créons une nouvelle partie est comptons de nouveau le nombre de partie en cours et vérifions qu'il y en a une de plus.  
 
 ## OAuth
 @TODO
 ## Top10
 
 ### Modification du coté server
-Pour le top 10, nous allons avoir deux modifications à faire du coté du server :
+Pour le top 10, nous allons avoir deux modifications à faire du coté du serveur :
 
  - création d'un service permettant de récupérer le top 10 des joueurs lors du chargement de l'application
  - l'envoi de mise à jour du TOP 10 lorsqu'un joueur gagne une partie
 
-La première chose à faire est la création d'une requête permettant de récupéré le top 10 des joueurs.
- Pour cela nous utilisons le pipeline aggregate de MongoDB en ajoutant une méthode dans le model Mongoose en modifiant le fichier `/server/api/game/game.model.js`
+La première chose à faire est la création d'une requête permettant de récupérer le top 10 des joueurs.
+ Pour cela nous utilisons le pipeline aggregate de MongoDB en ajoutant une méthode dans le `Model` Mongoose en modifiant le fichier `/server/api/game/game.model.js`
 
 ```javascript
 var Game = mongoose.model('Game', GameSchema);
@@ -706,9 +709,9 @@ Game.getTop10 = function(callback){
 
 module.exports = Game;
 ```
-Comme nous plaçons le nom du joueur gagnant dans la propriété `winner`du l'objet `Game`, cette requête
+Comme nous plaçons le nom du joueur gagnant dans la propriété `winner` du l'objet `Game`, cette requête
 
- - filtre les elements dont la propriété winnner existe
+ - filtre les éléments dont la propriété winnner existe
  - groupe les elements en créant un comptage des elements dans la propriété score
  - trie en ordre décroissant sur la propriété score
  - récupère les 10 premiers élément
@@ -732,7 +735,7 @@ exports.scores = function(req, res) {
 };
 ```
 
-Enfin nous devons envoyé une mise a jour en cas de victoire d'un joueur, pour cela nous modifions la méthode `validateAndPlayTurn` dans le fichier `/server/api/game/game.controller.js` pour verifier si un gagnant a été positionné sur la partie et alors requetter le top 10 et émettre un événement si nécessaire
+Enfin nous devons envoyer une mise a jour en cas de victoire d'un joueur, pour cela nous modifions la méthode `validateAndPlayTurn` dans le fichier `/server/api/game/game.controller.js` pour verifier si un gagnant a été positionné sur la partie et alors requêter le top 10 et émettre un événement si nécessaire
 
 ```javascript
 // Validate and play turn
