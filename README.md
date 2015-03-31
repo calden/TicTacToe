@@ -88,7 +88,7 @@ module.exports = router;
 La syntaxe `router.param(paramName, aFunction)` permet de dire que lorsque l'on utilisera une route contenant un paramètre `paramName`, il faudra passer par le middleware correspondant à la fonction.
 Celui ci recevra en plus des objet requête et réponse, une fonction `next` et le paramètre. Vous pourrez alors décider de rendre immédiatement la réponse ou passer la main au middleware suivant en invoquant la fonction `next`
 
-L'utilisation de `auth` permet de s'assurer que l'utilisateur est loggué et positionne ses informations dans la propriété `req.user`. 
+L'utilisation de `auth` permet de s'assurer que l'utilisateur est loggué et positionne ses informations dans la propriété `req.user`.
 Ce service est fourni par le générateur et utilise la librairie Passport.
 
 Il reste à indiquer à Express qu'il faut utiliser ces mappings pour les urls en `api/games/`. Dans le fichier `/server/routes.js` vous ajoutez :
@@ -308,7 +308,7 @@ Nous allons intégrer l'affichage de la liste des parties dans le state Main de 
 
 Pour chaque partie, nous allons afficher les noms des joueurs. A partir de chaque élément de la liste, nous allons pouvoir rejoindre en tant que joueur une partie ou accéder à la visualisation de la partie.
 
-Le main.html va être séparé en deux sections aux responsabilités suivantes : 
+Le main.html va être séparé en deux sections aux responsabilités suivantes :
   -  une section gérant l'affichage de la liste des parties en cours.
   -  une autre associée à un sous-état de `main` (utilisation de la directive `ui-view`) :  permettant l'affichage de la directive `Gameboard` ou  du formulaire de création de partie.
 
@@ -368,7 +368,7 @@ angular.module('ticTacToeApp')
 
       var main = this;
       main.games = games;
- 
+
     }]);
 
 ```
@@ -383,7 +383,7 @@ Nous modifions la vue afin d'afficher notre liste de jeux. On utilise ici un `ng
       <div>
           <span>{{game.player1}} vs {{game.player2}}</span>
       </div>
-         
+
       </div>
     </div>
 </div>
@@ -392,7 +392,7 @@ Nous modifions la vue afin d'afficher notre liste de jeux. On utilise ici un `ng
 
 ## creation d'une partie dans le back
 
-Nous allons maintenant voir comment nous pouvons créer une partie dans le backend. 
+Nous allons maintenant voir comment nous pouvons créer une partie dans le backend.
 
 L'objet Game étant créé dans le front, nous n'avons rien de plus à faire que ce qui a été fait dans le step de création du model pour Game, qui récupère l'objet Game dans le body de la requête pour le persister.
 
@@ -400,12 +400,12 @@ La méthode `Game.create` fera une correspondance entre les propriétés de l'ob
 
 ## creation d'une partie dans le front
 
-Nous allons ici donner la possibilité à l'utilisateur connecté de créer une nouvelle partie. 
+Nous allons ici donner la possibilité à l'utilisateur connecté de créer une nouvelle partie.
 
 Nous allons donc ajouter un sous état à l'état parent `main` : `main.creategame` dans `main/main.js`.
 
 ```javascript
- 
+
  .state('main.creategame', {
         url: 'creategame',
         templateUrl: 'app/main/creategame.html'
@@ -562,8 +562,8 @@ A partir de ce moment, un message est envoyé sur la socket lorsque nous émetto
 A noter que nous aurions pu utiliser des Middlewares sur le Schema qui propose des "hook" sur les post save et remove mais ceux-ci n'auraient pas permis de faire la différence entre un update et une création.
 
 ### Socket coté Front
- 
- 
+
+
 
 
 Une fois les events émis coté serveur, il faut désormais les traiter coté client.
@@ -693,11 +693,22 @@ describe('game management', function(){
 
 ## Intégration de la directive du gameboard
 
-Nous créons un sous state particulier afin d'afficher le plateau de jeu. c'est dans ce sous état que nous intégrons la directive du `gameboard`. 
-Dans ce sous état, nous allons afficher les joueurs du jeu en cours et la directive.
-Le but est ici de fournir les données nécessaires à la directive.
+Nous créons un sous-état particulier afin d'afficher le plateau de jeu et les informations associées au jeu courant.
 
-@TODO
+Le sous-état `main.gameboard` est ajouté au fichier `client/app/main/main.js`
+
+ ```javascript
+ .state('main.gameboard', {
+   url: 'gameboard/:idGame',
+   templateUrl: 'app/game/gameboard.html',
+   controller: 'GameboardCtrl as vm'
+ })
+ ```
+ La directive du plateau de jeu qui sera à inclure dans le gameboard.html est complétement fournie (voir code source de la directive dans `client/app/game/gameboard.directive.js`).
+
+ Nous allons coder maintenant le `GameboardCtrl' et cabler la directive à notre controller de l'état.
+
+ 
 
 
 ## Protractor
@@ -735,7 +746,7 @@ describe('Game View', function() {
 Dans ce test, nous commençons par nous logguer dans l'application en tant qu'utilisateur "test", puis nous comptons le nombre de partie en cours. Après cela nous créons une nouvelle partie est comptons de nouveau le nombre de partie en cours et vérifions qu'il y en a une de plus.  
 
 ## OAuth
- 
+
 Nous allons mettre en place l'authentification OAuth 2.0 via google.
 Pour cela, il faut générer les clés via la console developpeur de google.
 
