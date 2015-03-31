@@ -558,13 +558,9 @@ exports.register = function(socket) {
 ```
 A partir de ce moment, un message est envoyé sur la socket lorsque nous émettons un event.
 
-
 A noter que nous aurions pu utiliser des Middlewares sur le Schema qui propose des "hook" sur les post save et remove mais ceux-ci n'auraient pas permis de faire la différence entre un update et une création.
 
 ### Socket coté Front
-
-
-
 
 Une fois les events émis coté serveur, il faut désormais les traiter coté client.
 
@@ -704,12 +700,63 @@ Le sous-état `main.gameboard` est ajouté au fichier `client/app/main/main.js`
    controller: 'GameboardCtrl as vm'
  })
  ```
+
  La directive du plateau de jeu qui sera à inclure dans le gameboard.html est complétement fournie (voir code source de la directive dans `client/app/game/gameboard.directive.js`).
 
- Nous allons coder maintenant le `GameboardCtrl' et cabler la directive à notre controller de l'état.
+ Nous allons coder maintenant le `GameboardCtrl` et cabler la directive à notre controller de l'état. De plus, nous fournissons aussi un service `GameLogic` qui contient la logique du jeu.
 
- 
+ Notre controller ressemble à :
 
+```javascript
+.controller('GameboardCtrl', ['$scope', '$rootScope', '$stateParams', 'games', 'GameLogic', 'Auth',
+  function ($scope, $rootScope, $stateParams, games, GameLogic, Auth) {
+    var vm = this;
+    $rootScope.currentGameId = $stateParams.idGame;
+
+    // Connected user
+    vm.localPlayer = angular.isDefined(Auth.getCurrentUser().name) ?
+      Auth.getCurrentUser() :
+      undefined;
+
+    // Get game instance data from state argument (id)
+    vm.activeGame = _.find(games, function (game) {
+      return game._id === $stateParams.idGame;
+    });
+
+    // Game logic handler
+    vm.gameLogic = new GameLogic(vm.activeGame, vm.localPlayer);
+
+    // Play turn from directive
+
+    vm.playTurnRequest = function (cell) {
+      if (vm.localPlayer !== undefined) {
+        vm.message = vm.gameLogic.playTurn(cell.index);
+      }
+    };
+
+    // vm message
+    vm.message = vm.gameLogic.getMessage();
+
+    // Watch remote game updates
+    var $offGameRemoteUpdate = $rootScope.$on('game:remoteUpdate', function (e, g) {
+      if (g._id === vm.activeGame._id) {
+        vm.message = vm.gameLogic.getMessage();
+      }
+    });
+
+    $scope.$on('$destroy', function () {
+      $offGameRemoteUpdate();
+    });
+
+  }]);
+```
+
+ Nous allons donc passer les attributs suivant à notre directive qui attends trois attributs :
+ * vm.activeGame : notre instance de jeu courant.
+ * vm.playTurnRequest : la fonction permettant au joueur courant de jouer un coup. La directive va appeler cette fonction lorsqu'un coup sera joué.
+ * vm.message : le message à afficher en fonction de l'état du jeu.
+
+ A ce stade, si nous nous connectons en tant que l'utilisateur 'Test' nous sommes capable de jouer un coup.
 
 ## Protractor
 
@@ -747,10 +794,53 @@ Dans ce test, nous commençons par nous logguer dans l'application en tant qu'ut
 
 ## OAuth
 
-Nous allons mettre en place l'authentification OAuth 2.0 via google.
-Pour cela, il faut générer les clés via la console developpeur de google.
+Nous allons mettre en place l'authentification OAuth 2.0 via google. Si vous avez choisi Google comme fournisseur d'authentification à la génération du projet, le générateur Fullstack-Angular a créé l'habillage autour de cette authentification.
 
-@TODO ajout de la conf et partie Password coté Node.js
+Le code généré spécifique  se trouve dans le répertoire `server/auth/google`. Comme pour l'authentification locale, la librairie `passport.js` est utilisé. La librairie `passport-google-oauth` permet de fournir une stratégie d'authentification Oauth Google.
+
+L'initialisation se fait lors de la définition des routes du path `Auth` :
+
+```javascript
+'use strict';
+
+var express = require('express');
+var passport = require('passport');
+var config = require('../config/environment');
+var User = require('../api/user/user.model');
+
+// Passport Configuration
+require('./local/passport').setup(User, config);
+require('./google/passport').setup(User, config);
+
+var router = express.Router();
+
+router.use('/local', require('./local'));
+router.use('/google', require('./google'));
+
+module.exports = router;
+
+```
+
+Il faut donc ajouter à l'objet `config` les paramètres Oauth google . Les paramètres d'authentification doivent être créés depuis la console développeur de Google.
+
+Trois informations sont nécessaires :
+* clientID: ID associé à l'application ( généré et fourni par google pour votre application )
+* clientSecret: clé secrète que nous pouvons regénérer à la demande ( généré par google )
+* callbackURL: l'url callback vers notre application ( à fournir à google et doit correspondre à une url de notre application )
+
+Nous ajoutons donc ces paramètres à nos objets de configuration dans le fichier `server/config/environment/index.js`.
+
+```javascript
+.....
+google: {
+  clientID:    '######',
+  clientSecret: '#####',
+  callbackURL: 'auth/google/callback'
+}
+.....
+```
+
+Nous testons donc que l'authentifcation via Google fonctionne.
 
 
 ## Top10
